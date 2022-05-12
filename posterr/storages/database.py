@@ -9,17 +9,17 @@ class DataBase:
     client: MongoClient
     db: Database
 
-    def __init__(self, name:str, host:str, port:int):
+    def __init__(self, name:str, host:str, port:int) -> None:
         self.client:MongoClient = MongoClient(host, port)
         self.db = self.client[name]
 
-    def save(self, item:object):
+    def save(self, item:object) -> None:
         item_dict:dict = dict(item)
         collection_name:str = format(item)
         result = self.db[collection_name].insert_one(item_dict)
         return str(result.inserted_id)
 
-    def healthcheck(self):
+    def healthcheck(self) -> None:
         info:dict = self.client.server_info()
         print("Database Mongodb is working!")
         print(f"Version {info['version']}")

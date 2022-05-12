@@ -1,6 +1,8 @@
 from posterr.api import init_api
+from posterr.config import init_config
 
 def main():
-    init_api()
+    config = init_config()
+    init_api(config)
 
 main()

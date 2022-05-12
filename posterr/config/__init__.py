@@ -1,8 +1,10 @@
 from os import environ, path
 from xml.dom import NotFoundErr
 
+from typeguard import typechecked
 from vyper import Vyper
 
+@typechecked
 def init_config() -> Vyper:
     env:str = environ.get("ENV")
     if env is None:

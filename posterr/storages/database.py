@@ -1,5 +1,8 @@
+from typeguard import typechecked
+
 from pymongo.mongo_client import MongoClient
 
+@typechecked
 class DataBase:
     client: MongoClient
 

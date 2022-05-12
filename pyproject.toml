@@ -12,6 +12,7 @@ python = "^3.9"
 aiohttp = "^3.8.1"
 pymongo = "^4.1.1"
 vyper-config = "^1.1.1"
+typeguard = "^2.13.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

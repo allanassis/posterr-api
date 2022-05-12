@@ -1,0 +1,4 @@
+storages:
+  database:
+    host: "172.19.0.3"
+    port: 27017

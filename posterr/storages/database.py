@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, List
 
 from bson import ObjectId
 from typeguard import typechecked
@@ -6,6 +6,7 @@ from typeguard import typechecked
 from pymongo.mongo_client import MongoClient
 from pymongo.database import Database as MongoDb
 from pymongo.results import InsertOneResult
+from pymongo.cursor import Cursor
 
 @typechecked
 class DataBase:
@@ -24,6 +25,10 @@ class DataBase:
     def get_by_id(self, id: str, entity_name: str) -> Union[dict, None]:
         item = self.db[entity_name].find_one({ "_id": ObjectId(id) })
         return item
+
+    def get_all(self, entity_name: str) ->  List[Union[dict, None]]:
+        items:Cursor = self.db[entity_name].find({})
+        return list(items)
 
     def healthcheck(self) -> None:
         info:dict = self.client.server_info()

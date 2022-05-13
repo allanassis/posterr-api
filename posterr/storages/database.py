@@ -17,7 +17,7 @@ class DataBase:
         self.db = self.client[name]
 
     def save(self, item:object, entity_name) -> str:
-        item_dict:dict = dict(item)
+        item_dict:dict = item.__dict__
         result:InsertOneResult = self.db[entity_name].insert_one(item_dict)
         return str(result.inserted_id)
 

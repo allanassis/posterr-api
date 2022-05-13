@@ -22,9 +22,9 @@ class User:
         self.following = {"count": 0, "list": []}
         self.posts = {"count": 0, "list": []}
 
-    def save(self, db:DataBase) -> ObjectId:
+    def save(self, db:DataBase) -> str:
         inserted_id = db.save(self, User.__name__.lower())
-        return ObjectId(inserted_id)
+        return inserted_id
 
     @staticmethod
     def get(id: str, db: DataBase) -> object:# type: ignore

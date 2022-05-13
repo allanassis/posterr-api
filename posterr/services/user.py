@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 import typing
 
 from bson import ObjectId
@@ -36,3 +37,6 @@ class User:
         for k,v in enumerate(properties):
             setattr(self, k, v)
         return self
+
+    def __str__(self) -> str:
+        return json.dumps({ **self.__dict__, "_id": str(self._id) })

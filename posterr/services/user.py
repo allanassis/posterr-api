@@ -4,7 +4,6 @@ import typing
 
 from bson import ObjectId
 
-from posterr.storages.dao.user import UserDao
 from posterr.storages.database import DataBase
 from posterr.services.post import Post
 

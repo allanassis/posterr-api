@@ -1,22 +1,24 @@
-from pickle import NONE
+from typing import Union
+
+from bson import ObjectId
 from typeguard import typechecked
 
 from pymongo.mongo_client import MongoClient
-from pymongo.database import Database
+from pymongo.database import Database as MongoDb
+from pymongo.results import InsertOneResult
 
 @typechecked
 class DataBase:
     client: MongoClient
-    db: Database
+    db: MongoDb
 
     def __init__(self, name:str, host:str, port:int) -> None:
         self.client:MongoClient = MongoClient(host, port)
         self.db = self.client[name]
 
-    def save(self, item:object) -> None:
+    def save(self, item:object, entity_name) -> str:
         item_dict:dict = dict(item)
-        collection_name:str = format(item)
-        result = self.db[collection_name].insert_one(item_dict)
+        result:InsertOneResult = self.db[entity_name].insert_one(item_dict)
         return str(result.inserted_id)
 
     def get(self, id: ObjectId, entity_name: str) -> Union[dict, None]:

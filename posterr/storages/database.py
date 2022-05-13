@@ -19,6 +19,10 @@ class DataBase:
         result = self.db[collection_name].insert_one(item_dict)
         return str(result.inserted_id)
 
+    def get(self, id: ObjectId, entity_name: str) -> Union[dict, None]:
+        item = self.db[entity_name].find_one({ "_id": id })
+        return item
+
     def healthcheck(self) -> None:
         info:dict = self.client.server_info()
         print("Database Mongodb is working!")

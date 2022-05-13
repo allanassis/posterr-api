@@ -15,7 +15,7 @@ class User:
     following:typing.Dict[int, typing.List[ObjectId]]
     posts: typing.Dict[int, typing.List[ObjectId]]
 
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str = None) -> None:
         self.name = name
         self.created_at = datetime.now().isoformat()
         self.followers = {"count": 0, "list": []}
@@ -27,7 +27,7 @@ class User:
         return ObjectId(inserted_id)
 
     @staticmethod
-    def get(id: str, db: DataBase) -> User:# type: ignore
+    def get(id: str, db: DataBase) -> object:# type: ignore
         item = db.get(id, User.__name__.lower())
         user = User()
         return user.build(item)

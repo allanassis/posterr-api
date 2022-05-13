@@ -31,12 +31,12 @@ class Post(object):
         return ObjectId(inserted_id)
     
     @staticmethod
-    def get(id: str, db: DataBase) -> Post:# type: ignore
+    def get(id: str, db: DataBase) -> object:# type: ignore
         item = db.get(id, Post.__name__.lower())
         post = Post()
         return post.build(item)
 
-    def build(self, properties:dict) -> Post:# type: ignore
+    def build(self, properties:dict) -> object:# type: ignore
         for k,v in enumerate(properties):
             setattr(self, k, v)
         return self

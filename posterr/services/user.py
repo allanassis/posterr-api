@@ -2,18 +2,17 @@ from datetime import datetime
 import json
 import typing
 
-from bson import ObjectId
 
 from posterr.storages.database import DataBase
 from posterr.services.post import Post
 
 class User:
-    _id: ObjectId
+    _id: str
     name: str
     created_at: datetime
-    followers: typing.Dict[int, typing.List[ObjectId]]
-    following:typing.Dict[int, typing.List[ObjectId]]
-    posts: typing.Dict[int, typing.List[ObjectId]]
+    followers: typing.Dict[int, typing.List[str]]
+    following:typing.Dict[int, typing.List[str]]
+    posts: typing.Dict[int, typing.List[str]]
 
     def __init__(self, name: str = None) -> None:
         self.name = name

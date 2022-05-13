@@ -1,8 +1,6 @@
 from datetime import date, datetime
 from enum import Enum
 
-from bson import ObjectId
-
 from posterr.storages.database import DataBase
 
 class PostType(Enum):
@@ -12,7 +10,7 @@ class PostType(Enum):
 
 
 class Post(object):
-    id: str
+    _id: str
     type: Enum
     text: str
     user_id: str
@@ -26,9 +24,9 @@ class Post(object):
         self.parent_id = parent_id
         self.created_at = datetime.now().isoformat()
     
-    def save(self, db: DataBase) -> ObjectId:
+    def save(self, db: DataBase) -> str:
         inserted_id:str = db.save(self, self, Post.__name__.lower())
-        return ObjectId(inserted_id)
+        return inserted_id
     
     @staticmethod
     def get(id: str, db: DataBase) -> object:# type: ignore

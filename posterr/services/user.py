@@ -32,8 +32,8 @@ class User:
         user = User()
         return user.build(item)
 
-    def build(self, properties:dict) -> User:# type: ignore
-        for k,v in enumerate(properties):
+    def build(self, properties:dict) -> object:# type: ignore
+        for k,v in properties.items():
             setattr(self, k, v)
         return self
 

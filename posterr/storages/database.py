@@ -21,7 +21,7 @@ class DataBase:
         result:InsertOneResult = self.db[entity_name].insert_one(item_dict)
         return str(result.inserted_id)
 
-    def get(self, id: str, entity_name: str) -> Union[dict, None]:
+    def get_by_id(self, id: str, entity_name: str) -> Union[dict, None]:
         item = self.db[entity_name].find_one({ "_id": ObjectId(id) })
         return item
 

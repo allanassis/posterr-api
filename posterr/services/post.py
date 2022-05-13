@@ -32,7 +32,7 @@ class Post(object):
     
     @staticmethod
     def get(id: str, db: DataBase) -> object:# type: ignore
-        item = db.get(id, Post.__name__.lower())
+        item = db.get_by_id(id, Post.__name__.lower())
         post = Post()
         return post.build(item)
 

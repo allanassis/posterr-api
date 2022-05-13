@@ -27,8 +27,8 @@ class User:
         return inserted_id
 
     @staticmethod
-    def get(id: str, db: DataBase) -> object:# type: ignore
-        item = db.get(id, User.__name__.lower())
+    def get_by_id(id: str, db: DataBase) -> object:# type: ignore
+        item = db.get_by_id(id, User.__name__.lower())
         user = User()
         return user.build(item)
 

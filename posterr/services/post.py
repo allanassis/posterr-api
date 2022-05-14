@@ -18,10 +18,12 @@ class Post(object):
     created_at: datetime
 
     def __init__(self, text: str, user_id: str, parent_id: str = None, type:Enum = PostType.NORMAL) -> None:
-        self.type = type
         self.text = text
         self.user_id = user_id
-        self.parent_id = parent_id
+        if parent_id is not None:
+            self.parent_id = parent_id
+        if type is not None:
+            self.type = PostType[type]
         self.created_at = datetime.now().isoformat()
     
     def save(self, db: DataBase) -> str:

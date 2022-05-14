@@ -31,6 +31,16 @@ class User:
         user = User()
         return user.build(item)
 
+    @staticmethod
+    def get_all(db: DataBase) -> typing.List[object]:
+        items = db.get_all(User.__name__.lower())
+        users = []
+        for item in items:
+            user = User()
+            user.build(item)
+            users.append(user)
+        return users
+
     def build(self, properties:dict) -> object:# type: ignore
         for k,v in properties.items():
             setattr(self, k, v)

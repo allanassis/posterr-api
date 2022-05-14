@@ -47,4 +47,5 @@ class User:
         return self
 
     def __str__(self) -> str:
-        return json.dumps({ **self.__dict__, "_id": str(self._id) })
+        return json.dumps(self.__dict__)
+    

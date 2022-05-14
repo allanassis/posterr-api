@@ -24,14 +24,17 @@ class DataBase:
 
     def get_by_id(self, id: str, entity_name: str) -> Union[dict, None]:
         item = self.db[entity_name].find_one({ "_id": ObjectId(id) })
+        item["_id"] = str(item["_id"])
         return item
 
     def get_all(self, entity_name: str) ->  List[Union[dict, None]]:
         items:Cursor = self.db[entity_name].find({})
-        return list(items)
+        item_list = list(items)
+        for item in item_list:
+            item["_id"] = str(item["_id"])
+        return item_list
 
     def healthcheck(self) -> None:
         info:dict = self.client.server_info()
         print("Database Mongodb is working!")
         print(f"Version {info['version']}")
-

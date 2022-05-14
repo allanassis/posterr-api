@@ -28,7 +28,7 @@ class UserHandlers(web.View):
 
     async def post(self):
         body = await self.request.json()
-        user:User = User(body["name"])
+        user:User = User(name=body["name"])
         user_id:str = user.save(self.request.config_dict["db"])
         return web.Response(body=user_id, status=web.HTTPOk.status_code)
 

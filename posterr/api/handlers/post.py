@@ -1,6 +1,6 @@
 from aiohttp import web
 
-from posterr.services.post import Post
+from posterr.services.post import Post, PostType
 from posterr.services.user import User
 
 class PostHandlers(web.View):
@@ -30,7 +30,7 @@ class PostHandlers(web.View):
         db = self.request.config_dict["db"]
 
         user_id = body.get("user_id")
-        type = body.get("type")
+        type = body.get("type", PostType.NORMAL.name)
         parent_id = body.get("parent_id")
         text = body.get("text")
 

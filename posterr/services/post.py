@@ -1,4 +1,5 @@
-from datetime import date, datetime
+import json
+from datetime import datetime
 from enum import Enum
 
 from posterr.storages.database import DataBase
@@ -50,3 +51,8 @@ class Post(object):
         for k,v in enumerate(properties):
             setattr(self, k, v)
         return self
+    
+    def __str__(self) -> str:
+        post_dict:dict = self.__dict__
+        type = post_dict.pop("type")
+        return json.dumps({**self.__dict__, "type": type})

@@ -27,7 +27,7 @@ class Post(object):
         self.created_at = datetime.now().isoformat()
     
     def save(self, db: DataBase) -> str:
-        inserted_id:str = db.save(self, self, Post.__name__.lower())
+        inserted_id:str = db.save(self, Post.__name__.lower())
         return inserted_id
     
     @staticmethod

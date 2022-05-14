@@ -16,10 +16,10 @@ class UserHandlers(web.View):
         return await self.get_all(db)
 
     async def get_by_id(self, id, db):
-        item = User.get_by_id(id, db)
-        if item is None:
+        user = User.get_by_id(id, db)
+        if user is None:
             return web.Response(text="Not found", status=web.HTTPNotFound.status_code)
-        return web.Response(body=str(item), status=web.HTTPOk.status_code)
+        return web.Response(body=str(user), status=web.HTTPOk.status_code)
 
     async def get_all(self, db):
         users = User.get_all(db)
@@ -28,8 +28,8 @@ class UserHandlers(web.View):
 
     async def post(self):
         body = await self.request.json()
-        item:User = User(body["name"])
-        user_id:str = item.save(self.request.config_dict["db"])
+        user:User = User(body["name"])
+        user_id:str = user.save(self.request.config_dict["db"])
         return web.Response(body=user_id, status=web.HTTPOk.status_code)
 
     async def put(self):

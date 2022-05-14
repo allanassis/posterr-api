@@ -1,8 +1,10 @@
 import json
+import typing
 from datetime import datetime
 from enum import Enum
 
 from posterr.storages.database import DataBase
+from posterr.services.base import ServiceBase
 
 class PostType(Enum):
     NORMAL = "normal"
@@ -10,7 +12,7 @@ class PostType(Enum):
     QUOTED = "quoted"
 
 
-class Post(object):
+class Post(ServiceBase):
     _id: str
     type: Enum
     text: str
@@ -18,7 +20,9 @@ class Post(object):
     parent_id: str
     created_at: datetime
 
-    def __init__(self, text: str, user_id: str, parent_id: str = None, type:Enum = PostType.NORMAL.name) -> None:
+    entity_name:str = "post"
+
+    def __init__(self, text: str = None, user_id: str = None, parent_id: str = None, type:Enum = PostType.NORMAL.name) -> None:
         self.text = text
         self.user_id = user_id
         if parent_id is not None:
@@ -26,31 +30,6 @@ class Post(object):
         if type is not None:
             self.type = PostType[type]
         self.created_at = datetime.now().isoformat()
-    
-    def save(self, db: DataBase) -> str:
-        inserted_id:str = db.save(self, Post.__name__.lower())
-        return inserted_id
-    
-    @staticmethod
-    def get_all(db: DataBase) -> object:# type: ignore
-        items = db.get_all(Post.__name__.lower())
-        posts = []
-        for item in items:
-            post = Post(item["text"], item["user_id"])
-            post.build(item)
-            posts.append(post)
-        return posts
-
-    @staticmethod
-    def get_by_id(id: str, db: DataBase) -> object:
-        item:dict= db.get_by_id(id, Post.__name__.lower())
-        post = Post(item.get("text"), item.get("user_id"))
-        return post.build(item)
-
-    def build(self, properties:dict) -> object:# type: ignore
-        for k,v in properties.items():
-            setattr(self, k, v)
-        return self
     
     def __str__(self) -> str:
         post_dict:dict = self.__dict__

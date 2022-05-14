@@ -16,13 +16,13 @@ class UserHandlers(web.View):
         return await self.get_all(db)
 
     async def get_by_id(self, id, db):
-        user = User.get_by_id(id, db)
+        user = User.get_by_id(id, User, db)
         if user is None:
             return web.Response(text="Not found", status=web.HTTPNotFound.status_code)
         return web.Response(body=str(user), status=web.HTTPOk.status_code)
 
     async def get_all(self, db):
-        users = User.get_all(db)
+        users = User.get_all(User, db)
         json_users = [str(user) for user in users]
         return web.Response(body=str(json_users), status=web.HTTPOk.status_code)
 

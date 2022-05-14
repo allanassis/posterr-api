@@ -4,8 +4,9 @@ import typing
 
 from posterr.storages.database import DataBase
 from posterr.services.post import Post
+from posterr.services.base import ServiceBase
 
-class User:
+class User(ServiceBase):
     _id: str
     name: str
     created_at: datetime
@@ -13,46 +14,25 @@ class User:
     following:typing.Dict[int, typing.List[str]]
     posts: typing.Dict[int, typing.List[str]]
 
+    entity_name:str = "user"
+
     def __init__(self, _id:str = None, name: str = None) -> None:
-        self._id = _id
-        self.name = name
+        if _id is not None:
+            self._id = _id
+        if name is not None:
+            self.name = name
         self.created_at = datetime.now().isoformat()
         self.followers = {"count": 0, "list": []}
         self.following = {"count": 0, "list": []}
         self.posts = {"count": 0, "list": []}
 
-    def save(self, db:DataBase) -> str:
-        inserted_id = db.save(self, User.__name__.lower())
-        return inserted_id
-
-    @staticmethod
-    def get_by_id(id: str, db: DataBase) -> object:# type: ignore
-        item = db.get_by_id(id, User.__name__.lower())
-        user = User()
-        return user.build(item)
-
-    @staticmethod
-    def get_all(db: DataBase) -> typing.List[object]:
-        items = db.get_all(User.__name__.lower())
-        users = []
-        for item in items:
-            user = User()
-            user.build(item)
-            users.append(user)
-        return users
-
-    def build(self, properties:dict) -> object:# type: ignore
-        for k,v in properties.items():
-            setattr(self, k, v)
-        return self
-
     # TODO: Fix creating a querying to do just one database call to update the user
     def follow(self, following_id, db:DataBase) -> str:
-        user:User = User.get_by_id(self._id, db)
+        user:User = User.get_by_id(self._id, User, db)
         user.set_following(following_id)
         user.update(db)
 
-        following:User = User.get_by_id(following_id, db)
+        following:User = User.get_by_id(following_id, User, db)
         following.set_follower(self._id)
         following.update(db)
         
@@ -60,11 +40,11 @@ class User:
     
     # TODO: Fix creating a querying to do just one database call to update the user
     def unfollow(self, following_id, db: DataBase) -> str:
-        user:User = User.get_by_id(self._id, db)
+        user:User = User.get_by_id(self._id, User, db)
         user.remove_following(following_id)
         user.update(db)
 
-        following:User = User.get_by_id(following_id, db)
+        following:User = User.get_by_id(following_id, User, db)
         following.remove_follower(self._id)
         following.update(db)
         

@@ -4,6 +4,7 @@ from aiohttp import web
 from vyper import Vyper
 
 from posterr.api.handlers.handlers import healthcheck
+from posterr.api.handlers.post import PostHandlers
 from posterr.api.handlers.user import UserHandlers
 from posterr.storages.database import DataBase
 
@@ -20,5 +21,8 @@ def init_api(config: Vyper) -> None:
 
     app.router.add_view("/user/", UserHandlers)
     app.router.add_view("/user/{id}", UserHandlers)
+    
+    app.router.add_view("/post/", PostHandlers)
+    app.router.add_view("/post/{id}", PostHandlers)
     
     web.run_app(app)

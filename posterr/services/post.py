@@ -31,9 +31,19 @@ class Post(object):
         return inserted_id
     
     @staticmethod
-    def get(id: str, db: DataBase) -> object:# type: ignore
-        item = db.get_by_id(id, Post.__name__.lower())
-        post = Post()
+    def get_all(db: DataBase) -> object:# type: ignore
+        items = db.get_all(Post.__name__.lower())
+        posts = []
+        for item in items:
+            post = Post(item["text"], item["user_id"])
+            post.build(item)
+            posts.append(post)
+        return posts
+
+    @staticmethod
+    def get_by_id(id: str, db: DataBase) -> object:
+        item:dict= db.get_by_id(id, Post.__name__.lower())
+        post = Post(item.get("text"), item.get("user_id"))
         return post.build(item)
 
     def build(self, properties:dict) -> object:# type: ignore

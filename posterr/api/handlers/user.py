@@ -32,13 +32,21 @@ class UserHandlers(web.View):
         user_id:str = item.save(self.request.config_dict["db"])
         return web.Response(body=user_id, status=web.HTTPOk.status_code)
 
-    # async def put(self):
-    #     body = await self.request.json()
-    #     id = self.request.match_info.get('id')
-    #     item = User(body["name"])
-    #     db = self.request.config_dict["db"]
-    #     updated = item.update(db)
-    #     return web.Response(body=str(updated), status=web.HTTPOk.status_code)
+    async def put(self):
+        body:dict = await self.request.json()
+        db = self.request.config_dict["db"]
+
+        id = self.request.match_info.get('id')
+        action = body.get("action")
+        following_id = body.get("following")
+        user = User(id, body.get("name"))
+
+        if action == "FOLLOW":
+            user.follow(following_id, db)
+        elif action == "UNFOLLOW":
+            user.unfollow(following_id, db)
+
+        return web.Response(body=id, status=web.HTTPOk.status_code)
 
     # async def delete(self):
     #     id = self.request.match_info.get('id')

@@ -18,7 +18,7 @@ class Post(object):
     parent_id: str
     created_at: datetime
 
-    def __init__(self, text: str, user_id: str, parent_id: str = None, type:Enum = PostType.NORMAL) -> None:
+    def __init__(self, text: str, user_id: str, parent_id: str = None, type:Enum = PostType.NORMAL.name) -> None:
         self.text = text
         self.user_id = user_id
         if parent_id is not None:
@@ -48,7 +48,7 @@ class Post(object):
         return post.build(item)
 
     def build(self, properties:dict) -> object:# type: ignore
-        for k,v in enumerate(properties):
+        for k,v in properties.items():
             setattr(self, k, v)
         return self
     

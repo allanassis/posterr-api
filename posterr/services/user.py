@@ -3,6 +3,7 @@ import json
 import typing
 
 from posterr.storages.database import DataBase
+from posterr.services.post import Post
 
 class User:
     _id: str
@@ -68,6 +69,13 @@ class User:
         following.update(db)
         
         return self._id
+
+    def post(self, post: Post, db:DataBase) -> str:
+        post_id = post.save(db)
+        self.posts["list"].append(post_id)
+        self.posts["count"] = self.posts["count"] + 1
+        self.update(db)
+        return post_id
 
     def update(self, db: DataBase) -> object:
         result = db.update(self, User.__name__.lower())

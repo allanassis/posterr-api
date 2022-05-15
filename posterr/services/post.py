@@ -23,7 +23,7 @@ class Post(ServiceBase):
 
     entity_name:str = "post"
 
-    def __init__(self, text: str = None, user_id: str = None, parent_id: str = None, type:Enum = PostType.NORMAL.name) -> None:
+    def __init__(self, text: str = None, user_id: str = None, parent_id: str = None, type:str = PostType.NORMAL.name) -> None:
         self.text = text
         self.user_id = user_id
         if parent_id is not None:

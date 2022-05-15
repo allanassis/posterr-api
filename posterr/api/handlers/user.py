@@ -22,23 +22,24 @@ class UserHandlers(BaseHandler, View):
     async def post(self) -> Response:
         body:dict = await self.request.json()
         user:User = User(name=body["name"])
-        user_id:str = user.save(self.request.config_dict["db"])
+        dao = UserDao()
+        user_id:str = user.save(dao, self.request.config_dict["db"])
 
         return Response(body=user_id, status=HTTPOk.status_code)
 
     async def put(self) -> Response:
         body:dict = await self.request.json()
         db:DataBase = self.request.config_dict["db"]
-
+        userDao = UserDao()
         id:str = self.request.match_info.get('id')
         action:str = body.get("action")
         following_id:str = body.get("following")
         user:User = User(id, body.get("name"))
 
         if action == "FOLLOW":
-            user.follow(following_id, db)
+            user.follow(following_id, userDao, db)
         elif action == "UNFOLLOW":
-            user.unfollow(following_id, db)
+            user.unfollow(following_id, userDao, db)
 
         return Response(body=id, status=HTTPOk.status_code)
 

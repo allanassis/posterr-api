@@ -23,7 +23,7 @@ class DataBase:
         return str(result.inserted_id)
 
     def update(self, item: object, collection:str) -> str:
-        item_dict:dict = item.__dict__
+        item_dict:dict = item.__dict__.copy()
         id = item_dict.pop("_id")
         result:UpdateResult = self.db[collection].update_one({"_id": ObjectId(id)}, {"$set" :item_dict})
         return id

@@ -4,6 +4,7 @@ from typeguard import typechecked
 from posterr.services.post import Post, PostType
 from posterr.services.user import User
 from posterr.api.handlers.base import BaseHandler
+from posterr.storages.dao.user import UserDao
 from posterr.storages.database import DataBase
 from posterr.storages.dao.post import PostDao
 
@@ -34,8 +35,11 @@ class PostHandlers(BaseHandler, View):
         parent_id:str = body.get("parent_id")
         text:str = body.get("text")
 
-        user:User = User.get_by_id(user_id, db)
+        userDao = UserDao()
+        user:User = User.get_by_id(user_id, userDao, db)
+
+        postDao = PostDao()
         post:Post = Post(text, user_id, parent_id, type)
-        post_id:str = user.post(post, db)
+        post_id:str = user.post(post, userDao, postDao, db)
 
         return Response(body=post_id, status=HTTPOk.status_code)

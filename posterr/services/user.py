@@ -3,6 +3,7 @@ import json
 import typing
 
 from typeguard import typechecked
+from posterr.storages.dao.post import PostDao
 
 from posterr.storages.database import DataBase
 from posterr.services.post import Post
@@ -29,22 +30,22 @@ class User(ServiceBase):
         self.following = {"count": 0, "list": []}
         self.posts = {"count": 0, "list": []}
 
-    def post(self, post: Post, db:DataBase) -> str:
-        post_id:str = post.save(db)
+    def post(self, post: Post, userDao: object, postDao:PostDao, db:DataBase) -> str:
+        post_id:str = post.save(postDao, db)
         self.posts["list"].append(post_id)
         self.posts["count"] = self.posts["count"] + 1
-        self.update(db)
+        self.update(userDao, db)
         return post_id
 
     # TODO: Fix creating a querying to do just one database call to update the user
-    def follow(self, following_id:str, db:DataBase) -> str:
-        user:User = User.get_by_id(self._id, db)
+    def follow(self, following_id:str, dao:object, db:DataBase) -> str:
+        user:User = User.get_by_id(self._id, dao, db)
         user._set_follow("following", following_id)
-        user.update(db)
+        user.update(dao, db)
 
-        following:User = User.get_by_id(following_id, db)
+        following:User = User.get_by_id(following_id, dao, db)
         following._set_follow("followers", self._id)
-        following.update(db)
+        following.update(dao, db)
         
         return self._id
 
@@ -55,14 +56,14 @@ class User(ServiceBase):
             attr["count"] = attr["count"] + 1
 
     # TODO: Fix creating a querying to do just one database call to update the user
-    def unfollow(self, following_id:str, db: DataBase) -> str:
-        user:User = User.get_by_id(self._id, db)
+    def unfollow(self, following_id:str, dao:object, db: DataBase) -> str:
+        user:User = User.get_by_id(self._id, dao, db)
         user._remove_follow("following", following_id)
-        user.update(db)
+        user.update(dao, db)
 
-        following:User = User.get_by_id(following_id, db)
+        following:User = User.get_by_id(following_id, dao, db)
         following._remove_follow("followers", self._id)
-        following.update(db)
+        following.update(dao, db)
         
         return self._id
 
@@ -72,8 +73,8 @@ class User(ServiceBase):
             attr["list"].remove(user)
             attr["count"] = attr["count"] - 1
 
-    def update(self, db: DataBase) -> object:
-        result = db.update(self, User.__name__.lower())
+    def update(self, dao: object, db: DataBase) -> object:
+        result = dao.update(self, db)
         return result
 
     def __str__(self) -> str:

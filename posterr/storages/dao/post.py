@@ -18,3 +18,7 @@ class PostDao(object):
 
     def get_by_id(self, id:str, db: DataBase) -> dict:
         return db.get_by_id(id, Post.entity_name)
+    
+    def save(self, post:Post, db:DataBase) -> str:
+        result = db.save(post, Post.entity_name)
+        return result

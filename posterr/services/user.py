@@ -2,10 +2,13 @@ from datetime import datetime
 import json
 import typing
 
+from typeguard import typechecked
+
 from posterr.storages.database import DataBase
 from posterr.services.post import Post
 from posterr.services.base import ServiceBase
 
+@typechecked
 class User(ServiceBase):
     _id: str
     name: str

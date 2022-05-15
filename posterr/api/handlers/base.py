@@ -1,9 +1,11 @@
 from typing import List
 
+from typeguard import typechecked
 from aiohttp.web import Response, HTTPOk, HTTPNotFound
 
 from posterr.storages.database import DataBase
 
+@typechecked
 class BaseHandler(object):
 
     async def get_by_id(self, Class:object, id: str, db: DataBase) -> Response:

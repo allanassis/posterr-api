@@ -1,7 +1,10 @@
 import typing
 
+from typeguard import typechecked
+
 from posterr.storages.database import DataBase
 
+@typechecked
 class ServiceBase(object):
 
     entity_name:str = "base"

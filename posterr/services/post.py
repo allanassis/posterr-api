@@ -2,6 +2,8 @@ import json
 from datetime import datetime
 from enum import Enum
 
+from typeguard import typechecked
+
 from posterr.storages.database import DataBase
 from posterr.services.base import ServiceBase
 
@@ -10,6 +12,7 @@ class PostType(Enum):
     REPOSTED = "reposted"
     QUOTED = "quoted"
 
+@typechecked
 class Post(ServiceBase):
     _id: str
     type: Enum

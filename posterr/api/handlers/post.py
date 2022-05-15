@@ -1,10 +1,12 @@
 from aiohttp.web import View, Response, HTTPOk
+from typeguard import typechecked
 
 from posterr.services.post import Post, PostType
 from posterr.services.user import User
 from posterr.api.handlers.base import BaseHandler
 from posterr.storages.database import DataBase
 
+@typechecked
 class PostHandlers(BaseHandler, View):
 
     async def get(self) -> Response:

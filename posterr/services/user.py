@@ -46,6 +46,8 @@ class User(ServiceBase):
 
     # TODO: Fix creating a querying to do just one database call to update the user
     def follow(self, following_id:str, dao:object, db:DataBase) -> str:
+        if following_id == self._id:
+            raise ValueError("User can not follow him self")
         user:User = User.get_by_id(self._id, dao, db)
         user._set_follow("following", following_id)
         user.update(dao, db)

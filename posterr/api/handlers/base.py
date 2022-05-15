@@ -11,7 +11,7 @@ class BaseHandler(object):
     async def get_by_id(self, id: str, Class:object, dao:object, db: DataBase) -> Response:
         instance:object = Class.get_by_id(id, dao, db)
         if instance is None:
-            return Response(text="Not found", status=HTTPNotFound.status_code)
+            return Response(body="Not found", status=HTTPNotFound.status_code)
         return Response(body=str(instance), status=HTTPOk.status_code)
 
     async def get_all(self, Class:object, dao: object, db:DataBase) -> Response:

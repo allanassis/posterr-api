@@ -1,7 +1,7 @@
-from typing import List
+from typing import List, Tuple
 
 from typeguard import typechecked
-from aiohttp.web import View, Response, HTTPOk
+from aiohttp.web import View, Response, HTTPOk, HTTPBadRequest
 from aiohttp.typedefs import _MultiDictProxy
 
 from posterr.services.user import User
@@ -48,7 +48,13 @@ class PostHandlers(BaseHandler, View):
         body:dict = await self.request.json()
         db: DataBase = self.request.config_dict["db"]
 
-        [ user_id, post_parent_id, post_type, post_text ] = self._get_body(body)
+        body_parsed = self._get_body(body)
+
+        is_valid_body, msg = self._is_valid_body(*body_parsed)
+        if not is_valid_body:
+            return Response(body=msg, status=HTTPBadRequest.status_code)
+
+        [ user_id, post_parent_id, post_type, post_text ] = body_parsed
 
         userDao:UserDao = UserDao()
         user:User = User.get_by_id(user_id, userDao, db)
@@ -67,3 +73,15 @@ class PostHandlers(BaseHandler, View):
             body.get("text", "")
         ]
         return body
+    
+    def _is_valid_body(self, user_id:str, parent_id:str, type:str, text:str) -> Tuple[bool, str]:
+        if not user_id:
+            return (False, "Missing user id")
+
+        if (type != PostType.NORMAL.name) and (not parent_id):
+            return (False, "Quoted posts and Reposted posts should have a post parent id")
+
+        if not text:
+            return (False, "Post text should not be empty") #I know it is not in the requirements but it is feel needed
+
+        return (True, "Fine :D")

@@ -24,7 +24,7 @@ class User(ServiceBase):
             self._id = _id
         if name is not None:
             self.name = name
-        self.created_at = datetime.now().isoformat()
+        self.created_at = datetime.now()
         self.followers = {"count": 0, "list": []}
         self.following = {"count": 0, "list": []}
         self.posts = {"count": 0, "list": []}
@@ -77,5 +77,7 @@ class User(ServiceBase):
         return result
 
     def __str__(self) -> str:
-        return json.dumps(self.__dict__)
+        user_dict:dict = self.__dict__
+        created_at = user_dict.pop("created_at").isoformat()
+        return json.dumps({**user_dict, "created_at": created_at})
     

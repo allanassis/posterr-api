@@ -30,9 +30,11 @@ class Post(ServiceBase):
             self.parent_id = parent_id
         if type is not None:
             self.type = PostType[type].value
-        self.created_at = datetime.now().isoformat()
+        self.created_at = datetime.now()
     
     def __str__(self) -> str:
         post_dict:dict = self.__dict__
         type:PostType = post_dict.pop("type")
-        return json.dumps({**self.__dict__, "type": type})
+        created_at:str = post_dict.pop("created_at").isoformat()
+
+        return json.dumps({**self.__dict__, "type": type, "created_at": created_at})

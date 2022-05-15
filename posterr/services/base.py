@@ -14,8 +14,8 @@ class ServiceBase(object):
         return inserted_id
 
     @classmethod
-    def get_all(Class: object, db: DataBase) -> typing.List[object]:
-        items: typing.List[dict] = db.get_all(Class.entity_name)
+    def get_all(Class: object, dao: object, db: DataBase) -> typing.List[object]:
+        items: typing.List[dict] = dao.get_all(db)
         service_list:typing.List[object] = []
 
         for item in items:

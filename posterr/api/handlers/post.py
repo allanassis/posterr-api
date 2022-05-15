@@ -5,6 +5,7 @@ from posterr.services.post import Post, PostType
 from posterr.services.user import User
 from posterr.api.handlers.base import BaseHandler
 from posterr.storages.database import DataBase
+from posterr.storages.dao.post import PostDao
 
 @typechecked
 class PostHandlers(BaseHandler, View):
@@ -12,10 +13,17 @@ class PostHandlers(BaseHandler, View):
     async def get(self) -> Response:
         id:str = self.request.match_info.get('id')
         db:DataBase = self.request.config_dict["db"]
+        last_post_date = self.request.query.get("last_post_date", "")
+        limit_per_page = int(self.request.query.get("limit", 10))
+        dao = PostDao({
+            "limit": limit_per_page,
+            "last_post_date": last_post_date
+        })
 
         if id is not None:
             return await self.get_by_id(Post, id, db)
-        return await self.get_all(Post, db)
+
+        return await self.get_all(Post, dao, db)
 
     async def post(self) -> Response:
         body:dict = await self.request.json()

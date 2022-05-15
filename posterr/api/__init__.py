@@ -3,7 +3,7 @@ from aiohttp.web import Application
 from aiohttp import web
 from vyper import Vyper
 
-from posterr.api.handlers.handlers import healthcheck
+from posterr.api.handlers.healthcheck import healthcheck
 from posterr.api.handlers.post import PostHandlers
 from posterr.api.handlers.user import UserHandlers
 from posterr.storages.database import DataBase

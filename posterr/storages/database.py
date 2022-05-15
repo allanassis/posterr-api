@@ -6,7 +6,7 @@ from typeguard import typechecked
 from pymongo.mongo_client import MongoClient
 from pymongo.database import Database as MongoDb
 from pymongo.results import InsertOneResult, UpdateResult
-from pymongo.cursor import Cursor
+from pymongo import ASCENDING
 
 @typechecked
 class DataBase:
@@ -33,8 +33,8 @@ class DataBase:
         item["_id"] = str(item["_id"])
         return item
 
-    def get_all(self, collection: str) ->  List[Union[dict, None]]:
-        items:Cursor = self.db[collection].find({})
+    def get_all(self, collection: str, filters: dict = {}, sort:list = [("$natural", ASCENDING)], limit:int = 1000) ->  List[Union[dict, None]]:
+        items = self.db[collection].find(filters).sort(sort).limit(limit)
         item_list = list(items)
         for item in item_list:
             item["_id"] = str(item["_id"])

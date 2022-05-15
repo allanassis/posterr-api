@@ -1,6 +1,7 @@
 from datetime import datetime
 import json
 import typing
+import re
 
 from typeguard import typechecked
 from posterr.storages.dao.post import PostDao
@@ -24,6 +25,9 @@ class User(ServiceBase):
         if _id is not None:
             self._id = _id
         if name is not None:
+            only_alphanumeric_regex = r'\w+'
+            if re.fullmatch(only_alphanumeric_regex, name) is None:
+                raise AttributeError("User name only allows alpha numeric caracteres")
             self.name = name
         self.created_at = datetime.now()
         self.followers = {"count": 0, "list": []}

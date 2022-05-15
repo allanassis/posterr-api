@@ -1,5 +1,6 @@
 from typing import List
 from datetime import datetime
+from posterr.config import ConfigManager
 from posterr.storages.database import DataBase
 from posterr.services.post import Post
 
@@ -10,9 +11,16 @@ class PostDao(object):
 
     #TODO: Adicionar limite maximo
     def get_all(self, db: DataBase) -> List[dict]:
+        maximum_page_size = ConfigManager().config.get_string("post.maximum_page_size") #I know it is not on requiments of project, but i think is really needed because of DOS or DDOS
         query:dict = {}
-        if self.queries.get("last_post_date"):
-            query["created_at"] = { "$lt": datetime.fromisoformat(self.queries["last_post_date"]) }
+
+        page_size = self.queries["limit"]
+        last_post_date = self.queries.get("last_post_date")
+
+        if page_size > maximum_page_size:
+            raise ValueError(f"The limit for each page of posts is {maximum_page_size}")
+        if last_post_date:
+            query["created_at"] = { "$lt": datetime.fromisoformat(last_post_date) }
 
         if self.queries.get("following_list"):
             query["user_id"] = {"$in": self.queries["following_list"] }

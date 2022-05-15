@@ -91,7 +91,7 @@ class User(ServiceBase):
         return result
 
     def __str__(self) -> str:
-        date_format:int = ConfigManager().config.get_int("user.date_format")
+        date_format:str = ConfigManager().config.get_string("user.date_format")
         user_dict:dict = self.__dict__
 
         created_at = user_dict.pop("created_at").strftime(date_format) # ex May 24, 2021

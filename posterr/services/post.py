@@ -38,7 +38,7 @@ class Post(ServiceBase):
         self.created_at = datetime.now()
     
     def __str__(self) -> str:
-        date_format:int = ConfigManager().config.get_int("post.date_format")
+        date_format:str = ConfigManager().config.get_string("post.date_format")
         post_dict:dict = self.__dict__
 
         type:PostType = post_dict.pop("type")

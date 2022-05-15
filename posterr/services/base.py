@@ -10,20 +10,20 @@ class ServiceBase(object):
         inserted_id:str = db.save(self, self.entity_name)
         return inserted_id
 
-    @staticmethod
-    def get_all(Service: object, db: DataBase) -> typing.List[object]:
-        items: typing.List[dict] = db.get_all(Service.entity_name)
+    @classmethod
+    def get_all(Class: object, db: DataBase) -> typing.List[object]:
+        items: typing.List[dict] = db.get_all(Class.entity_name)
         service_list:typing.List[object] = []
         for item in items:
-            service:object = Service()
+            service:object = Class()
             service.build(item)
             service_list.append(service)
         return service_list
     
-    @staticmethod
-    def get_by_id(id: str, Service:object, db: DataBase) -> object:
-        item:dict = db.get_by_id(id, Service.entity_name)
-        service:object = Service()
+    @classmethod
+    def get_by_id(Class:object, id: str, db: DataBase) -> object:
+        item:dict = db.get_by_id(id, Class.entity_name)
+        service:object = Class()
         return service.build(item)
     
     def build(self, properties:dict) -> object:

@@ -35,11 +35,11 @@ class User(ServiceBase):
 
     # TODO: Fix creating a querying to do just one database call to update the user
     def follow(self, following_id, db:DataBase) -> str:
-        user:User = User.get_by_id(self._id, User, db)
+        user:User = User.get_by_id(self._id, db)
         user._set_follow("following", following_id)
         user.update(db)
 
-        following:User = User.get_by_id(following_id, User, db)
+        following:User = User.get_by_id(following_id, db)
         following._set_follow("followers", self._id)
         following.update(db)
         
@@ -53,19 +53,19 @@ class User(ServiceBase):
 
     # TODO: Fix creating a querying to do just one database call to update the user
     def unfollow(self, following_id, db: DataBase) -> str:
-        user:User = User.get_by_id(self._id, User, db)
+        user:User = User.get_by_id(self._id, db)
         user._remove_follow("following", following_id)
         user.update(db)
 
-        following:User = User.get_by_id(following_id, User, db)
-        following._remove_follow("follower", self._id)
+        following:User = User.get_by_id(following_id, db)
+        following._remove_follow("followers", self._id)
         following.update(db)
         
         return self._id
 
     def _remove_follow(self, type: str, user:str) -> None:
         attr = getattr(self, type)
-        if (user is not None) and (user not in attr["list"]):
+        if (user is not None) and (user in attr["list"]):
             attr["list"].remove(user)
             attr["count"] = attr["count"] - 1
 

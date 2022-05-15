@@ -15,13 +15,13 @@ class PostHandlers(web.View):
         return await self.get_all(db)
 
     async def get_by_id(self, id, db):
-        post = Post.get_by_id(id, Post, db)
+        post = Post.get_by_id(id, db)
         if post is None:
             return web.Response(text="Not found", status=web.HTTPNotFound.status_code)
         return web.Response(body=str(post), status=web.HTTPOk.status_code)
 
     async def get_all(self, db):
-        posts = Post.get_all(Post, db)
+        posts = Post.get_all(db)
         json_posts = [str(post) for post in posts]
         return web.Response(body=str(json_posts), status=web.HTTPOk.status_code)
 
@@ -34,7 +34,7 @@ class PostHandlers(web.View):
         parent_id = body.get("parent_id")
         text = body.get("text")
 
-        user:User = User.get_by_id(user_id, User, db)
+        user:User = User.get_by_id(user_id, db)
         post:Post = Post(text, user_id, parent_id, type)
         post_id = user.post(post, db)
 

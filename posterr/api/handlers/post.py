@@ -14,8 +14,8 @@ class PostHandlers(BaseHandler, View):
         db:DataBase = self.request.config_dict["db"]
 
         if id is not None:
-            return await self.get_by_id(id, db)
-        return await self.get_all(db)
+            return await self.get_by_id(Post, id, db)
+        return await self.get_all(Post, db)
 
     async def post(self) -> Response:
         body:dict = await self.request.json()

@@ -3,3 +3,7 @@ storages:
     name: posterr
     host: "172.19.0.3"
     port: 27017
+
+post:
+  maximum_size: 777
+  date_format: "%b %d, %Y"

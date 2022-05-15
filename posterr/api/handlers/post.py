@@ -16,10 +16,20 @@ class PostHandlers(BaseHandler, View):
         db:DataBase = self.request.config_dict["db"]
         last_post_date = self.request.query.get("last_post_date", "")
         limit_per_page = int(self.request.query.get("limit", 10))
+        user_id = self.request.query.get("user_id")
+
+        userDao = UserDao()
+        user:User = None
+
         dao = PostDao({
+            "user_id": id,
             "limit": limit_per_page,
-            "last_post_date": last_post_date
+            "last_post_date": last_post_date,
         })
+
+        if user_id:
+            user = User.get_by_id(user_id, userDao, db)
+            dao.queries["following_list"] = user.following["list"]
 
         if id is not None:
             return await self.get_by_id(id, Post, dao, db)

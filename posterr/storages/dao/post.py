@@ -11,8 +11,11 @@ class PostDao(object):
     #TODO: Adicionar limite maximo
     def get_all(self, db: DataBase) -> List[dict]:
         query:dict = {}
-        if self.queries["last_post_date"]:
+        if self.queries.get("last_post_date"):
             query["created_at"] = { "$lt": datetime.fromisoformat(self.queries["last_post_date"]) }
+
+        if self.queries.get("following_list"):
+            query["user_id"] = {"$in": self.queries["following_list"] }
 
         return db.get_all(Post.entity_name, query, [("created_at", -1)], self.queries["limit"])
 

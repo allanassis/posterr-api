@@ -26,6 +26,9 @@ class User(ServiceBase):
             self._id = _id
         if name is not None:
             only_alphanumeric_regex = r'\w+'
+            if len(name) > 14:
+                raise AttributeError("User name has maximum length of 14 caracteres")
+
             if re.fullmatch(only_alphanumeric_regex, name) is None:
                 raise AttributeError("User name only allows alpha numeric caracteres")
             self.name = name

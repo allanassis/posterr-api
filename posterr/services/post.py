@@ -35,6 +35,6 @@ class Post(ServiceBase):
     def __str__(self) -> str:
         post_dict:dict = self.__dict__
         type:PostType = post_dict.pop("type")
-        created_at:str = post_dict.pop("created_at").isoformat()
+        created_at:str = post_dict.pop("created_at").strftime("%b %d, %Y")
 
         return json.dumps({**self.__dict__, "type": type, "created_at": created_at})

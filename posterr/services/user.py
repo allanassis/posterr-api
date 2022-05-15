@@ -79,6 +79,6 @@ class User(ServiceBase):
 
     def __str__(self) -> str:
         user_dict:dict = self.__dict__
-        created_at = user_dict.pop("created_at").isoformat()
+        created_at = user_dict.pop("created_at").strftime("%b %d, %Y")
         return json.dumps({**user_dict, "created_at": created_at})
     

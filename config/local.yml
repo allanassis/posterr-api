@@ -7,3 +7,5 @@ storages:
 post:
   maximum_size: 777
   date_format: "%b %d, %Y"
+user:
+  date_format: "%b %d, %Y"

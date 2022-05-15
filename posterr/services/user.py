@@ -4,6 +4,7 @@ import typing
 import re
 
 from typeguard import typechecked
+from posterr.config import ConfigManager
 from posterr.storages.dao.post import PostDao
 
 from posterr.storages.database import DataBase
@@ -25,13 +26,15 @@ class User(ServiceBase):
         if _id is not None:
             self._id = _id
         if name is not None:
-            only_alphanumeric_regex = r'\w+'
             if len(name) > 14:
                 raise AttributeError("User name has maximum length of 14 caracteres")
 
+            only_alphanumeric_regex = r'\w+'
             if re.fullmatch(only_alphanumeric_regex, name) is None:
                 raise AttributeError("User name only allows alpha numeric caracteres")
+
             self.name = name
+
         self.created_at = datetime.now()
         self.followers = {"count": 0, "list": []}
         self.following = {"count": 0, "list": []}
@@ -44,10 +47,11 @@ class User(ServiceBase):
         self.update(userDao, db)
         return post_id
 
-    # TODO: Fix creating a querying to do just one database call to update the user
+    # TODO: Fix creating a querying to do just one database call to update the users
     def follow(self, following_id:str, dao:object, db:DataBase) -> str:
         if following_id == self._id:
             raise ValueError("User can not follow him self")
+
         user:User = User.get_by_id(self._id, dao, db)
         user._set_follow("following", following_id)
         user.update(dao, db)
@@ -87,7 +91,10 @@ class User(ServiceBase):
         return result
 
     def __str__(self) -> str:
+        date_format:int = ConfigManager().config.get_int("user.date_format")
         user_dict:dict = self.__dict__
-        created_at = user_dict.pop("created_at").strftime("%b %d, %Y")
-        return json.dumps({**user_dict, "created_at": created_at})
+
+        created_at = user_dict.pop("created_at").strftime(date_format) # ex May 24, 2021
+
+        return json.dumps({ **user_dict, "created_at": created_at })
     

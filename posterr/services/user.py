@@ -27,14 +27,14 @@ class User(ServiceBase):
         self.posts = {"count": 0, "list": []}
 
     def post(self, post: Post, db:DataBase) -> str:
-        post_id = post.save(db)
+        post_id:str = post.save(db)
         self.posts["list"].append(post_id)
         self.posts["count"] = self.posts["count"] + 1
         self.update(db)
         return post_id
 
     # TODO: Fix creating a querying to do just one database call to update the user
-    def follow(self, following_id, db:DataBase) -> str:
+    def follow(self, following_id:str, db:DataBase) -> str:
         user:User = User.get_by_id(self._id, db)
         user._set_follow("following", following_id)
         user.update(db)
@@ -46,13 +46,13 @@ class User(ServiceBase):
         return self._id
 
     def _set_follow(self, type: str, user:str) -> None:
-        attr = getattr(self, type)
+        attr:dict = getattr(self, type)
         if (user is not None) and (user not in attr["list"]):
             attr["list"].append(user)
             attr["count"] = attr["count"] + 1
 
     # TODO: Fix creating a querying to do just one database call to update the user
-    def unfollow(self, following_id, db: DataBase) -> str:
+    def unfollow(self, following_id:str, db: DataBase) -> str:
         user:User = User.get_by_id(self._id, db)
         user._remove_follow("following", following_id)
         user.update(db)
@@ -64,7 +64,7 @@ class User(ServiceBase):
         return self._id
 
     def _remove_follow(self, type: str, user:str) -> None:
-        attr = getattr(self, type)
+        attr:dict = getattr(self, type)
         if (user is not None) and (user in attr["list"]):
             attr["list"].remove(user)
             attr["count"] = attr["count"] - 1

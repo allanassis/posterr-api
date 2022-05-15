@@ -1,5 +1,4 @@
 import json
-import typing
 from datetime import datetime
 from enum import Enum
 
@@ -10,7 +9,6 @@ class PostType(Enum):
     NORMAL = "normal"
     REPOSTED = "reposted"
     QUOTED = "quoted"
-
 
 class Post(ServiceBase):
     _id: str

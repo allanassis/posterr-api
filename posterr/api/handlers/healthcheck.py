@@ -1,4 +1,5 @@
 from typeguard import typechecked
+
 from aiohttp.web import Request, Response, HTTPOk
 
 from posterr.storages.database import DataBase

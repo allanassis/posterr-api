@@ -1,52 +1,42 @@
-import stat
-from aiohttp import web
-from bson import ObjectId
+from aiohttp.web import Response, View, HTTPOk
 
 from posterr.services.user import User
+from posterr.api.handlers.base import BaseHandler
+from posterr.storages.database import DataBase
 
-class UserHandlers(web.View):
+class UserHandlers(BaseHandler, View):
 
-    async def get(self):
-        id = self.request.match_info.get('id')
-        db = self.request.config_dict["db"]
+    async def get(self) -> Response:
+        id:str = self.request.match_info.get('id')
+        db:DataBase = self.request.config_dict["db"]
 
         if id is not None:
-            return await self.get_by_id(id, db)
+            return await self.get_by_id(User, id, db)
 
-        return await self.get_all(db)
+        return await self.get_all(User, db)
 
-    async def get_by_id(self, id, db):
-        user = User.get_by_id(id, db)
-        if user is None:
-            return web.Response(text="Not found", status=web.HTTPNotFound.status_code)
-        return web.Response(body=str(user), status=web.HTTPOk.status_code)
-
-    async def get_all(self, db):
-        users = User.get_all(db)
-        json_users = [str(user) for user in users]
-        return web.Response(body=str(json_users), status=web.HTTPOk.status_code)
-
-    async def post(self):
-        body = await self.request.json()
+    async def post(self) -> Response:
+        body:dict = await self.request.json()
         user:User = User(name=body["name"])
         user_id:str = user.save(self.request.config_dict["db"])
-        return web.Response(body=user_id, status=web.HTTPOk.status_code)
 
-    async def put(self):
+        return Response(body=user_id, status=HTTPOk.status_code)
+
+    async def put(self) -> Response:
         body:dict = await self.request.json()
-        db = self.request.config_dict["db"]
+        db:DataBase = self.request.config_dict["db"]
 
-        id = self.request.match_info.get('id')
-        action = body.get("action")
-        following_id = body.get("following")
-        user = User(id, body.get("name"))
+        id:str = self.request.match_info.get('id')
+        action:str = body.get("action")
+        following_id:str = body.get("following")
+        user:User = User(id, body.get("name"))
 
         if action == "FOLLOW":
             user.follow(following_id, db)
         elif action == "UNFOLLOW":
             user.unfollow(following_id, db)
 
-        return web.Response(body=id, status=web.HTTPOk.status_code)
+        return Response(body=id, status=HTTPOk.status_code)
 
     # async def delete(self):
     #     id = self.request.match_info.get('id')

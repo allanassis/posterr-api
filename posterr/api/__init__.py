@@ -7,9 +7,11 @@ from posterr.api.handlers.healthcheck import healthcheck
 from posterr.api.handlers.post import PostHandlers
 from posterr.api.handlers.user import UserHandlers
 from posterr.storages.database import DataBase
+from posterr.config import ConfigManager
 
 @typechecked
-def init_api(config: Vyper) -> None:
+def init_api() -> None:
+    config = ConfigManager().config
     db_host:str = config.get_string("storages.database.host")
     db_port:str = config.get_int("storages.database.port")
     db_name:str = config.get_string("storages.database.name")

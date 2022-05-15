@@ -26,8 +26,8 @@ class ServiceBase(object):
         return service_list
     
     @classmethod
-    def get_by_id(Class:object, id: str, db: DataBase) -> object:
-        item:dict = db.get_by_id(id, Class.entity_name)
+    def get_by_id(Class:object, id: str, dao:object, db: DataBase) -> object:
+        item:dict = dao.get_by_id(id, db)
         service:object = Class()
 
         return service.build(item)

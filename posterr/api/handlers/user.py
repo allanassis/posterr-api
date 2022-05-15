@@ -15,7 +15,7 @@ class UserHandlers(BaseHandler, View):
         dao = UserDao()
 
         if id is not None:
-            return await self.get_by_id(User, id, db)
+            return await self.get_by_id(id, User, dao, db)
 
         return await self.get_all(User, dao, db)
 

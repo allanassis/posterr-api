@@ -21,7 +21,7 @@ class PostHandlers(BaseHandler, View):
         })
 
         if id is not None:
-            return await self.get_by_id(Post, id, db)
+            return await self.get_by_id(id, Post, dao, db)
 
         return await self.get_all(Post, dao, db)
 

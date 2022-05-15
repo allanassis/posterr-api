@@ -26,30 +26,6 @@ class User(ServiceBase):
         self.following = {"count": 0, "list": []}
         self.posts = {"count": 0, "list": []}
 
-    # TODO: Fix creating a querying to do just one database call to update the user
-    def follow(self, following_id, db:DataBase) -> str:
-        user:User = User.get_by_id(self._id, User, db)
-        user.set_following(following_id)
-        user.update(db)
-
-        following:User = User.get_by_id(following_id, User, db)
-        following.set_follower(self._id)
-        following.update(db)
-        
-        return self._id
-    
-    # TODO: Fix creating a querying to do just one database call to update the user
-    def unfollow(self, following_id, db: DataBase) -> str:
-        user:User = User.get_by_id(self._id, User, db)
-        user.remove_following(following_id)
-        user.update(db)
-
-        following:User = User.get_by_id(following_id, User, db)
-        following.remove_follower(self._id)
-        following.update(db)
-        
-        return self._id
-
     def post(self, post: Post, db:DataBase) -> str:
         post_id = post.save(db)
         self.posts["list"].append(post_id)
@@ -57,30 +33,45 @@ class User(ServiceBase):
         self.update(db)
         return post_id
 
+    # TODO: Fix creating a querying to do just one database call to update the user
+    def follow(self, following_id, db:DataBase) -> str:
+        user:User = User.get_by_id(self._id, User, db)
+        user._set_follow("following", following_id)
+        user.update(db)
+
+        following:User = User.get_by_id(following_id, User, db)
+        following._set_follow("followers", self._id)
+        following.update(db)
+        
+        return self._id
+
+    def _set_follow(self, type: str, user:str) -> None:
+        attr = getattr(self, type)
+        if (user is not None) and (user not in attr["list"]):
+            attr["list"].append(user)
+            attr["count"] = attr["count"] + 1
+
+    # TODO: Fix creating a querying to do just one database call to update the user
+    def unfollow(self, following_id, db: DataBase) -> str:
+        user:User = User.get_by_id(self._id, User, db)
+        user._remove_follow("following", following_id)
+        user.update(db)
+
+        following:User = User.get_by_id(following_id, User, db)
+        following._remove_follow("follower", self._id)
+        following.update(db)
+        
+        return self._id
+
+    def _remove_follow(self, type: str, user:str) -> None:
+        attr = getattr(self, type)
+        if (user is not None) and (user not in attr["list"]):
+            attr["list"].remove(user)
+            attr["count"] = attr["count"] - 1
+
     def update(self, db: DataBase) -> object:
         result = db.update(self, User.__name__.lower())
         return result
-
-    # TODO: Remove duplicated code
-    def set_follower(self, follower) -> None:
-        if (follower is not None) and (follower not in self.followers["list"]):
-            self.followers["list"].append(follower)
-            self.followers["count"] = self.followers["count"] + 1
-
-    def set_following(self, following) -> None:
-        if (following is not None) and (following not in self.following["list"]):
-            self.following["list"].append(following)
-            self.following["count"] = self.following["count"] + 1
-    
-    def remove_follower(self, follower) -> None:
-        if (follower is not None) and (follower in self.followers["list"]):
-            self.followers["list"].remove(follower)
-            self.followers["count"] = self.followers["count"] - 1
-
-    def remove_following(self, following) -> None:
-        if (following is not None) and (following in self.following["list"]):
-            self.following["list"].remove(following)
-            self.following["count"] = self.following["count"] - 1
 
     def __str__(self) -> str:
         return json.dumps(self.__dict__)

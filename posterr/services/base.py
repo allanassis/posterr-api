@@ -1,4 +1,4 @@
-import typing
+from typing import List
 
 from typeguard import typechecked
 
@@ -14,9 +14,9 @@ class ServiceBase(object):
         return inserted_id
 
     @classmethod
-    def get_all(Class: object, dao: object, db: DataBase) -> typing.List[object]:
-        items: typing.List[dict] = dao.get_all(db)
-        service_list:typing.List[object] = []
+    def get_all(Class: object, dao: object, db: DataBase) -> List[object]:
+        items: List[dict] = dao.get_all(db)
+        service_list:List[object] = []
 
         for item in items:
             service:object = Class()

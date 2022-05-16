@@ -26,11 +26,14 @@ class User(ServiceBase):
         if _id is not None:
             self._id = _id
         if name:
-            if len(name) > 14:
-                raise AttributeError("User name has maximum length of 14 caracteres")
+            config = ConfigManager().config
 
-            only_alphanumeric_regex = r'\w+'
-            if re.fullmatch(only_alphanumeric_regex, name) is None:
+            maximium_name_size:int = config.get_int("user.name.maximum_size")
+            if len(name) > maximium_name_size:
+                raise AttributeError(f"User name has maximum length of {maximium_name_size} caracteres")
+
+            validate_regex = rf'{config.get_string("user.name.validate_regex")}'
+            if re.fullmatch(validate_regex, name) is None:
                 raise AttributeError("User name only allows alpha numeric caracteres")
 
             self.name = name

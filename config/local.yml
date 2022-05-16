@@ -8,4 +8,7 @@ post:
   maximum_page_size: 100
   date_format: "%b %d, %Y"
 user:
+  name:
+    maximum_size: 14
+    validate_regex: '\w+' # Only alphanumeric regex
   date_format: "%b %d, %Y"

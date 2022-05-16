@@ -11,7 +11,7 @@ class PostDao(object):
 
     #TODO: Adicionar limite maximo
     def get_all(self, db: DataBase) -> List[dict]:
-        maximum_page_size = ConfigManager().config.get_string("post.maximum_page_size") #I know it is not on requiments of project, but i think is really needed because of DOS or DDOS
+        maximum_page_size:int = ConfigManager().config.get_int("post.maximum_page_size") #I know it is not on requiments of project, but i think is really needed because of DOS or DDOS
         query:dict = {}
 
         page_size = self.queries["limit"]

@@ -25,7 +25,7 @@ class User(ServiceBase):
     def __init__(self, _id:str = None, name: str = None) -> None:
         if _id is not None:
             self._id = _id
-        if name is not None:
+        if name:
             if len(name) > 14:
                 raise AttributeError("User name has maximum length of 14 caracteres")
 

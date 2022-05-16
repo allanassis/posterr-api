@@ -15,12 +15,13 @@ class PostDao(object):
         query:dict = {}
 
         page_size = self.queries["limit"]
-        last_post_date = self.queries.get("last_post_date")
+        last_post_id = self.queries.get("last_post_id")
 
         if page_size > maximum_page_size:
             raise ValueError(f"The limit for each page of posts is {maximum_page_size}")
-        if last_post_date:
-            query["created_at"] = { "$lt": datetime.fromisoformat(last_post_date) }
+        if last_post_id:
+            last_post:object = Post.get_by_id(last_post_id, PostDao(), db)
+            query["created_at"] = { "$lt": last_post.created_at }
 
         if self.queries.get("following_list"):
             query["user_id"] = {"$in": self.queries["following_list"] }

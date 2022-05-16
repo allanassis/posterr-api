@@ -18,11 +18,11 @@ class PostHandlers(BaseHandler, View):
         post_id:str = self.request.match_info.get('id')
         db:DataBase = self.request.config_dict["db"]
 
-        [ user_id, last_post_date, limit_per_page ] = self._get_queries(self.request.query)
+        [ user_id, last_post_id, limit_per_page ] = self._get_queries(self.request.query)
 
         post_dao_args:dict = {
             "limit": int(limit_per_page),
-            "last_post_date": last_post_date,
+            "last_post_id": last_post_id,
         }
 
         if user_id:
@@ -39,7 +39,7 @@ class PostHandlers(BaseHandler, View):
     def _get_queries(self, query:_MultiDictProxy) -> List[str]:
         queries:List = [
             query.get("user_id", ""),
-            query.get("last_post_date", ""),
+            query.get("last_post_id", ""),
             query.get("limit", "10")
         ]
         return queries

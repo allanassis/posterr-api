@@ -11,6 +11,7 @@ from posterr.storages.database import DataBase
 from posterr.services.post import Post
 from posterr.services.base import ServiceBase
 
+@typechecked
 class UserValidationError(Exception):
     pass
 

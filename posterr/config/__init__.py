@@ -4,6 +4,7 @@ from xml.dom import NotFoundErr
 from typeguard import typechecked
 from vyper import Vyper
 
+@typechecked
 class ConfigManager:
     _instances = {}
     config:Vyper = None
@@ -18,7 +19,6 @@ class ConfigManager:
             cls._instances[cls] = instance
         return cls._instances[cls]
 
-    @typechecked
     @staticmethod
     def init_config() -> Vyper:
         env:str = environ.get("ENV")

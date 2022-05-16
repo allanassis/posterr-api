@@ -16,5 +16,7 @@ class BaseHandler(object):
 
     async def get_all(self, Class:object, dao: object, db:DataBase) -> Response:
         instance_list: List[object] = Class.get_all(dao, db)
+        if not instance_list:
+            return Response(body="Not found", status=HTTPNotFound.status_code)
         json_instances: List[str] = [str(instance) for instance in instance_list]
         return Response(body=str(json_instances), status=HTTPOk.status_code)

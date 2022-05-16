@@ -11,6 +11,9 @@ from posterr.storages.database import DataBase
 from posterr.services.post import Post
 from posterr.services.base import ServiceBase
 
+class UserValidationError(Exception):
+    pass
+
 @typechecked
 class User(ServiceBase):
     _id: str
@@ -30,11 +33,11 @@ class User(ServiceBase):
 
             maximium_name_size:int = config.get_int("user.name.maximum_size")
             if len(name) > maximium_name_size:
-                raise AttributeError(f"User name has maximum length of {maximium_name_size} caracteres")
+                raise UserValidationError(f"User name has maximum length of {maximium_name_size} caracteres")
 
             validate_regex = rf'{config.get_string("user.name.validate_regex")}'
             if re.fullmatch(validate_regex, name) is None:
-                raise AttributeError("User name only allows alpha numeric caracteres")
+                raise UserValidationError("User name only allows alpha numeric caracteres")
 
             self.name = name
 

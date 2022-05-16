@@ -1,9 +1,9 @@
 from typing import List, Tuple
 
 from typeguard import typechecked
-from aiohttp.web import Response, View, HTTPOk, HTTPBadRequest
+from aiohttp.web import Response, View, HTTPOk, HTTPBadRequest, HTTPUnprocessableEntity
 
-from posterr.services.user import User
+from posterr.services.user import User, UserValidationError
 from posterr.storages.dao.user import UserDao
 from posterr.storages.database import DataBase
 from posterr.api.handlers.base import BaseHandler
@@ -33,8 +33,13 @@ class UserHandlers(BaseHandler, View):
             return Response(body=msg, status=HTTPBadRequest.status_code)
 
         user_dao:UserDao = UserDao()
-        user:User = User(name=user_name)
-        user_id:str = user.save(user_dao, db)
+
+        try:
+            user:User = User(name=user_name)
+            user_id:str = user.save(user_dao, db)
+
+        except UserValidationError as err:
+            return Response(body=str(err), status=HTTPUnprocessableEntity.status_code)
 
         return Response(body=user_id, status=HTTPOk.status_code)
 

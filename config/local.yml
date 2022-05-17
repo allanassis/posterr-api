@@ -1,3 +1,5 @@
+app:
+  timeout: 5000
 storages:
   database:
     name: posterr

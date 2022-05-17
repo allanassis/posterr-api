@@ -1,3 +1,4 @@
+import logging
 from typeguard import typechecked
 from aiohttp.web import Application
 from aiohttp import web
@@ -11,6 +12,8 @@ from posterr.config import ConfigManager
 
 @typechecked
 def init_api() -> None:
+    logging.basicConfig(level=logging.DEBUG)
+
     config = ConfigManager().config
     db_host:str = config.get_string("storages.database.host")
     db_port:str = config.get_int("storages.database.port")

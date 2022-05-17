@@ -23,6 +23,9 @@ class UserHandlers(BaseHandler, View):
         return await self.get_all(User, user_dao, db)
 
     async def post(self) -> Response:
+        if not await self._is_valid_json(self.request):
+            return Response(body="Invalid JSON", status=HTTPBadRequest.status_code)
+
         body:dict = await self.request.json()
         db:DataBase = self.request.config_dict["db"]
 
@@ -49,6 +52,9 @@ class UserHandlers(BaseHandler, View):
         return (True, "Fine :D")
 
     async def put(self) -> Response:
+        if not await self._is_valid_json(self.request):
+            return Response(body="Invalid JSON", status=HTTPBadRequest.status_code)
+
         user_id:str = self.request.match_info.get('id')
         body:dict = await self.request.json()
         db:DataBase = self.request.config_dict["db"]

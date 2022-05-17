@@ -1,7 +1,7 @@
 from typing import List
 
 from typeguard import typechecked
-from aiohttp.web import Response, HTTPOk, HTTPNotFound
+from aiohttp.web import Response, Request, HTTPOk, HTTPNotFound
 
 from posterr.storages.database import DataBase
 
@@ -20,3 +20,10 @@ class BaseHandler(object):
             return Response(body="Not found", status=HTTPNotFound.status_code)
         json_instances: List[str] = [str(instance) for instance in instance_list]
         return Response(body=str(json_instances), status=HTTPOk.status_code)
+
+    async def _is_valid_json(self, request) -> bool:
+        try:
+            await request.json()
+            return True
+        except:
+            return False

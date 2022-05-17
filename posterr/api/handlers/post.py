@@ -45,6 +45,9 @@ class PostHandlers(BaseHandler, View):
         return queries
 
     async def post(self) -> Response:
+        if not await self._is_valid_json(self.request):
+            return Response(body="Invalid JSON", status=HTTPBadRequest.status_code)
+
         body:dict = await self.request.json()
         db: DataBase = self.request.config_dict["db"]
 

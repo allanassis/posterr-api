@@ -1,6 +1,7 @@
 import logging
 from typeguard import typechecked
 from aiohttp.web import Application
+from aiohttp.abc import AbstractAccessLogger
 from aiohttp import web
 from aiohttp_middlewares import error, cors, timeout
 
@@ -9,6 +10,14 @@ from posterr.api.handlers.post import PostHandlers
 from posterr.api.handlers.user import UserHandlers
 from posterr.storages.database import DataBase
 from posterr.config import ConfigManager
+
+from aiohttp.abc import AbstractAccessLogger
+
+class AccessLogger(AbstractAccessLogger):
+
+    def log(self, request, response, time):
+        log_str = f'{request.remote} {request.method} {request.path} done in {time}s: {response.status}'
+        self.logger.info(log_str)
 
 @typechecked
 def init_api() -> None:
@@ -37,4 +46,4 @@ def init_api() -> None:
     app.router.add_view("/post/", PostHandlers)
     app.router.add_view("/post/{id}", PostHandlers)
     
-    web.run_app(app)
+    web.run_app(app, access_log_class=AccessLogger)

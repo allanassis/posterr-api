@@ -6,6 +6,7 @@ from aiohttp.typedefs import _MultiDictProxy
 
 from posterr.services.user import User
 from posterr.services.post import Post, PostType
+from posterr.storages.cache import Cache
 from posterr.storages.dao.user import UserDao
 from posterr.storages.database import DataBase
 from posterr.storages.dao.post import PostDao
@@ -17,6 +18,8 @@ class PostHandlers(BaseHandler, View):
     async def get(self) -> Response:
         post_id:str = self.request.match_info.get('id')
         db:DataBase = self.request.config_dict["db"]
+        cache:Cache = self.request.config_dict["cache"]
+
 
         [ user_id, last_post_id, limit_per_page ] = self._get_queries(self.request.query)
 
@@ -27,14 +30,15 @@ class PostHandlers(BaseHandler, View):
 
         if user_id:
             user_dao:UserDao = UserDao()
-            user:User = User.get_by_id(user_id, user_dao, db)
+            user:User = User.get_by_id(user_id, user_dao, db, cache)
             post_dao_args["following_list"] = user.following["list"]
+            post_dao_args["following"] = True
 
         post_dao:PostDao = PostDao(post_dao_args)
         if post_id is not None:
-            return await self.get_by_id(post_id, Post, post_dao, db)
+            return await self.get_by_id(post_id, Post, post_dao, db, cache)
 
-        return await self.get_all(Post, post_dao, db)
+        return await self.get_all(Post, post_dao, db, cache)
 
     def _get_queries(self, query:_MultiDictProxy) -> List[str]:
         queries:List = [
@@ -50,6 +54,8 @@ class PostHandlers(BaseHandler, View):
 
         body:dict = await self.request.json()
         db: DataBase = self.request.config_dict["db"]
+        cache: Cache = self.request.config_dict["cache"]
+
 
         body_parsed = self._get_body(body)
 
@@ -60,11 +66,11 @@ class PostHandlers(BaseHandler, View):
         [ user_id, post_parent_id, post_type, post_text ] = body_parsed
 
         userDao:UserDao = UserDao()
-        user:User = User.get_by_id(user_id, userDao, db)
+        user:User = User.get_by_id(user_id, userDao, db, cache)
 
         postDao:PostDao = PostDao()
         post:Post = Post(post_text, user_id, post_parent_id, post_type)
-        post_id:str = user.post(post, userDao, postDao, db)
+        post_id:str = user.post(post, userDao, postDao, db, cache)
 
         return Response(body=post_id, status=HTTPOk.status_code)
 

@@ -4,6 +4,7 @@ from typeguard import typechecked
 from aiohttp.web import Response, View, HTTPOk, HTTPBadRequest, HTTPUnprocessableEntity
 
 from posterr.services.user import User, UserValidationError
+from posterr.storages.cache import Cache
 from posterr.storages.dao.user import UserDao
 from posterr.storages.database import DataBase
 from posterr.api.handlers.base import BaseHandler
@@ -14,13 +15,14 @@ class UserHandlers(BaseHandler, View):
     async def get(self) -> Response:
         user_id:str = self.request.match_info.get('id')
         db:DataBase = self.request.config_dict["db"]
+        cache:Cache = self.request.config_dict["cache"]
 
         user_dao:UserDao = UserDao()
 
         if user_id is not None:
-            return await self.get_by_id(user_id, User, user_dao, db)
+            return await self.get_by_id(user_id, User, user_dao, db, cache)
 
-        return await self.get_all(User, user_dao, db)
+        return await self.get_all(User, user_dao, db, cache)
 
     async def post(self) -> Response:
         if not await self._is_valid_json(self.request):
@@ -58,6 +60,7 @@ class UserHandlers(BaseHandler, View):
         user_id:str = self.request.match_info.get('id')
         body:dict = await self.request.json()
         db:DataBase = self.request.config_dict["db"]
+        cache:Cache = self.request.config_dict["cache"]
 
         body_parsed:List = self._get_body(body)
         is_valid_body, msg = self._is_valid_put_body(*body_parsed)
@@ -70,13 +73,13 @@ class UserHandlers(BaseHandler, View):
 
         # TODO: Create a enum to handle these actions
         if action == "FOLLOW":
-            user.follow(following_id, user_dao, db)
+            user.follow(following_id, user_dao, db, cache)
 
         elif action == "UNFOLLOW":
-            user.unfollow(following_id, user_dao, db)
+            user.unfollow(following_id, user_dao, db, cache)
 
         elif action == "UPDATE":
-            user.update(user_dao, db)
+            user.update(user_dao, db, cache)
 
         return Response(body=user_id, status=HTTPOk.status_code)
 

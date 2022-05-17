@@ -1,6 +1,7 @@
 from typing import List
 
 from typeguard import typechecked
+from posterr.storages.cache import Cache
 
 from posterr.storages.database import DataBase
 
@@ -14,8 +15,8 @@ class ServiceBase(object):
         return inserted_id
 
     @classmethod
-    def get_all(Class: object, dao: object, db: DataBase) -> List[object]:
-        items: List[dict] = dao.get_all(db)
+    def get_all(Class: object, dao: object, db: DataBase, cache: Cache) -> List[object]:
+        items: List[dict] = dao.get_all(db, cache)
         service_list:List[object] = []
 
         for item in items:
@@ -26,8 +27,8 @@ class ServiceBase(object):
         return service_list
     
     @classmethod
-    def get_by_id(Class:object, id: str, dao:object, db: DataBase) -> object:
-        item:dict = dao.get_by_id(id, db)
+    def get_by_id(Class:object, id: str, dao:object, db: DataBase, cache: Cache) -> object:
+        item:dict = dao.get_by_id(id, db, cache)
         service:object = Class()
 
         return service.build(item)

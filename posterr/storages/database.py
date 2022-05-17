@@ -1,5 +1,6 @@
 import logging
 from typing import Union, List
+from xml.dom import NotFoundErr
 
 from bson import ObjectId
 from typeguard import typechecked
@@ -31,12 +32,16 @@ class DataBase:
 
     def get_by_id(self, id: str, collection: str) -> Union[dict, None]:
         item = self.db[collection].find_one({ "_id": ObjectId(id) })
-        item["_id"] = str(item["_id"])
+        if not item:
+            raise NotFoundErr(f"Item with id {id} not found in database")
+        item["_id"] = str(item.get("_id"))
         return item
 
     def get_all(self, collection: str, filters: dict = {}, sort:list = [("$natural", ASCENDING)], limit:int = 1000) ->  List[Union[dict, None]]:
         items = self.db[collection].find(filters).sort(sort).limit(limit)
         item_list = list(items)
+        if not len(item_list):
+            raise NotFoundErr(f"No items founded in database")
         for item in item_list:
             item["_id"] = str(item["_id"])
         return item_list

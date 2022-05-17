@@ -5,6 +5,7 @@ import re
 
 from typeguard import typechecked
 from posterr.config import ConfigManager
+from posterr.storages.cache import Cache
 from posterr.storages.dao.post import PostDao
 
 from posterr.storages.database import DataBase
@@ -47,25 +48,25 @@ class User(ServiceBase):
         self.following = {"count": 0, "list": []}
         self.posts = {"count": 0, "list": []}
 
-    def post(self, post: Post, user_dao: object, post_dao:PostDao, db:DataBase) -> str:
+    def post(self, post: Post, user_dao: object, post_dao:PostDao, db:DataBase, cache: Cache) -> str:
         post_id:str = post.save(post_dao, db)
         self.posts["list"].append(post_id)
         self.posts["count"] = self.posts["count"] + 1
-        self.update(user_dao, db)
+        self.update(user_dao, db, cache)
         return post_id
 
     # TODO: Fix creating a querying to do just one database call to update the users
-    def follow(self, following_id:str, dao:object, db:DataBase) -> str:
+    def follow(self, following_id:str, dao:object, db:DataBase, cache: Cache) -> str:
         if following_id == self._id:
             raise ValueError("User can not follow him self")
 
-        user:User = User.get_by_id(self._id, dao, db)
+        user:User = User.get_by_id(self._id, dao, db, cache)
         user._set_follow("following", following_id)
-        user.update(dao, db)
+        user.update(dao, db, cache)
 
-        following:User = User.get_by_id(following_id, dao, db)
+        following:User = User.get_by_id(following_id, dao, db, cache)
         following._set_follow("followers", self._id)
-        following.update(dao, db)
+        following.update(dao, db, cache)
         
         return self._id
 
@@ -76,14 +77,14 @@ class User(ServiceBase):
             attr["count"] = attr["count"] + 1
 
     # TODO: Fix creating a querying to do just one database call to update the user
-    def unfollow(self, following_id:str, dao:object, db: DataBase) -> str:
-        user:User = User.get_by_id(self._id, dao, db)
+    def unfollow(self, following_id:str, dao:object, db: DataBase, cache: Cache) -> str:
+        user:User = User.get_by_id(self._id, dao, db, cache)
         user._remove_follow("following", following_id)
-        user.update(dao, db)
+        user.update(dao, db, cache)
 
-        following:User = User.get_by_id(following_id, dao, db)
+        following:User = User.get_by_id(following_id, dao, db, cache)
         following._remove_follow("followers", self._id)
-        following.update(dao, db)
+        following.update(dao, db, cache)
         
         return self._id
 
@@ -93,15 +94,17 @@ class User(ServiceBase):
             attr["list"].remove(user)
             attr["count"] = attr["count"] - 1
 
-    def update(self, dao: object, db: DataBase) -> object:
-        result = dao.update(self, db)
+    def update(self, dao: object, db: DataBase, cache: Cache) -> object:
+        result = dao.update(self, db, cache)
         return result
 
     def __str__(self) -> str:
         date_format:str = ConfigManager().config.get_string("user.date_format")
         user_dict:dict = self.__dict__
+        created_at = user_dict.pop("created_at")
 
-        created_at = user_dict.pop("created_at").strftime(date_format) # ex May 24, 2021
+        if type(created_at) != str:
+            created_at = created_at.strftime(date_format) # ex May 24, 2021
 
-        return json.dumps({ **user_dict, "created_at": created_at })
+        return json.dumps({ **user_dict, "created_at": created_at }) # type: ignore
     

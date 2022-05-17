@@ -1,6 +1,7 @@
 import json
 from enum import Enum
 from datetime import datetime
+from venv import create
 
 from typeguard import typechecked
 
@@ -40,7 +41,10 @@ class Post(ServiceBase):
         date_format:str = ConfigManager().config.get_string("post.date_format")
         post_dict:dict = self.__dict__
 
-        type:PostType = post_dict.pop("type")
-        created_at:str = post_dict.pop("created_at").strftime(date_format) # ex May 24, 2021
+        post_type:PostType = post_dict.pop("type")
+        created_at:str = post_dict.pop("created_at")
 
-        return json.dumps({ **self.__dict__, "type": type, "created_at": created_at })
+        if type(created_at) != str:
+            created_at = created_at.strftime(date_format) # ex May 24, 2021
+
+        return json.dumps({ **self.__dict__, "type": post_type, "created_at": created_at })

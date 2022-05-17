@@ -9,10 +9,12 @@ from posterr.api.handlers.healthcheck import healthcheck
 from posterr.api.handlers.post import PostHandlers
 from posterr.api.handlers.user import UserHandlers
 from posterr.storages.database import DataBase
+from posterr.storages.cache import Cache
 from posterr.config import ConfigManager
 
 from aiohttp.abc import AbstractAccessLogger
 
+# TODO: Create a structured logging class to handle structured log and send to a log server
 class AccessLogger(AbstractAccessLogger):
 
     def log(self, request, response, time):
@@ -28,7 +30,10 @@ def init_api() -> None:
     db_port:int = config.get_int("storages.database.port")
     db_name:str = config.get_string("storages.database.name")
 
-    timeout_time:int = config.get_int("storages.database.port")
+    cache_host:str = config.get_string("storages.cache.host")
+    cache_port:int = config.get_string("storages.cache.port")
+
+    timeout_time:int = config.get_int("app.timeout")
 
     app:Application = Application(middlewares=[
         web.normalize_path_middleware(),
@@ -36,7 +41,9 @@ def init_api() -> None:
         cors.cors_middleware(allow_all=True), # TODO: THIS SHOULD BE CHANGE TO THE SPA DOMAIN THAT WILL USE THIS API
         timeout.timeout_middleware(timeout_time)
     ])
+
     app["db"] = DataBase(db_name, db_host, db_port)
+    app["cache"] = Cache(cache_host, cache_port)
 
     app.add_routes([web.get('/healthcheck', healthcheck)])
 

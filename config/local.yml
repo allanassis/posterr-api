@@ -3,8 +3,11 @@ app:
 storages:
   database:
     name: posterr
-    host: "172.19.0.3"
+    host: "localhost"
     port: 27017
+  cache:
+    host: "localhost"
+    port: 6379
 post:
   maximum_size: 777
   maximum_page_size: 100

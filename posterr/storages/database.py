@@ -1,3 +1,4 @@
+import logging
 from typing import Union, List
 
 from bson import ObjectId
@@ -42,5 +43,5 @@ class DataBase:
 
     def healthcheck(self) -> None:
         info:dict = self.client.server_info()
-        print("Database Mongodb is working!")
-        print(f"Version {info['version']}")
+        logging.info("Database Mongodb is working!")
+        logging.info(f"Version {info['version']}")

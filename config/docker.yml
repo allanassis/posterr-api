@@ -1,0 +1,20 @@
+app:
+  timeout: 5000
+storages:
+  database:
+    name: posterr
+    host: "posterr-mongodb"
+    port: 27017
+  cache:
+    host: "posterr-redis"
+    port: 6379
+    ttl: 3000
+post:
+  maximum_size: 777
+  maximum_page_size: 100
+  date_format: "%b %d, %Y"
+user:
+  name:
+    maximum_size: 14
+    validate_regex: '\w+' # Only alphanumeric regex
+  date_format: "%b %d, %Y"

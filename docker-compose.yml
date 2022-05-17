@@ -1,0 +1,46 @@
+version: '3'
+services:
+  posterr-api:
+    container_name: posterr-api
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: poetry run start
+    ports:
+      - "8080:8080"
+    #command: mvn clean spring-boot:run -Dspring-boot.run.profiles=docker
+    depends_on:
+      - posterr-mongo
+      - posterr-redis
+    networks:
+      - posterr-network
+  posterr-redis:
+    container_name: posterr-redis
+    image: redis:5
+    ports:
+      - "6379:6379"
+    restart: always
+    command: redis-server
+    networks:
+      - posterr-network
+
+  posterr-mongodb:
+    container_name: posterr-mongodb
+    image: mongo:3.6
+    restart: always
+    environment:
+      MONGO_DATA_DIR: /data/db
+      MONGO_LOG_DIR: /dev/null
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+    command: mongod --smallfiles --logpath=/dev/null # --quiet
+    networks:
+      - posterr-network
+
+volumes:
+  mongo-data:
+networks:
+  posterr-network:

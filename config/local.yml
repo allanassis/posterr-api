@@ -8,6 +8,7 @@ storages:
   cache:
     host: "localhost"
     port: 6379
+    ttl: 3000
 post:
   maximum_size: 777
   maximum_page_size: 100

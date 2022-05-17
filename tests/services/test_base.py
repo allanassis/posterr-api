@@ -7,6 +7,7 @@ class MockClass:
 class TestServiceBase:
     db = MagicMock()
     dao = MagicMock()
+    cache = MagicMock()
     service = ServiceBase()
 
     def test_save(self):
@@ -26,7 +27,7 @@ class TestServiceBase:
         self.dao.get_all = MagicMock(return_value=[{ "prop": "value" }])
 
         # act
-        items = ServiceBase.get_all(self.dao, self.db)
+        items = ServiceBase.get_all(self.dao, self.db, self.cache)
 
         # arrange
         assert self.service.__dict__ == items[0].__dict__
@@ -38,7 +39,7 @@ class TestServiceBase:
         self.dao.get_by_id = MagicMock(return_value={ "prop": "value" })
         
         # act
-        items = ServiceBase.get_by_id("some-id", self.dao, self.db)
+        items = ServiceBase.get_by_id("some-id", self.dao, self.db, self.cache)
 
         # arrange
         assert self.service.__dict__ == items.__dict__

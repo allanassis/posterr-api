@@ -11,7 +11,7 @@ class TestUser(TestCase):
         instance = config_mock.return_value
         instance.config = MagicMock()
         instance.config.get_int.return_value = 17
-        instance.config.get_string.return_value = '\w+'
+        instance.config.get_string.return_value = '\\w+'
         props = {"name": "Malvin"}
 
         # act
@@ -26,7 +26,7 @@ class TestUser(TestCase):
         instance = config_mock.return_value
         instance.config = MagicMock()
         instance.config.get_int.return_value = 17
-        instance.config.get_string.return_value = '\w+'
+        instance.config.get_string.return_value = '\\w+'
         props = {"_id": "some_id", "name": "Malvin"}
 
         # act
@@ -42,7 +42,7 @@ class TestUser(TestCase):
         instance = config_mock.return_value
         instance.config = MagicMock()
         instance.config.get_int.return_value = 3
-        instance.config.get_string.return_value = '\w+'
+        instance.config.get_string.return_value = '\\w+'
         props = {"_id": "some_id", "name": "Malvin"}
 
         # act / assert
@@ -55,7 +55,7 @@ class TestUser(TestCase):
         instance = config_mock.return_value
         instance.config = MagicMock()
         instance.config.get_int.return_value = 17
-        instance.config.get_string.return_value = '\w+'
+        instance.config.get_string.return_value = '\\w+'
         props = {"_id": "some_id", "name": "Malvin+++!"}
 
         # act / assert
@@ -69,24 +69,25 @@ class TestUser(TestCase):
         instance = config_mock.return_value
         instance.config = MagicMock()
         instance.config.get_int.return_value = 17
-        instance.config.get_string.return_value = '\w+'
+        instance.config.get_string.return_value = '\\w+'
         props = {"_id": "some_id", "name": "Malvin"}
         user = User(**props)
 
         post_dao = MagicMock()
         user_dao = MagicMock()
         db = MagicMock()
+        cache = MagicMock()
         post = MagicMock()
         
         user.update = MagicMock()
         post.save = MagicMock(return_value="post_id")
 
         # act
-        post_id = user.post(post, user_dao, post_dao, db)
+        post_id = user.post(post, user_dao, post_dao, db, cache)
 
         # assert
         post.save.assert_called_once_with(post_dao, db)
-        user.update.assert_called_once_with(user_dao, db)
+        user.update.assert_called_once_with(user_dao, db, cache)
         self.assertListEqual(user.posts["list"], [post_id])
         self.assertEqual(user.posts["count"], 1)
 
@@ -98,16 +99,17 @@ class TestUser(TestCase):
         instance = config_mock.return_value
         instance.config = MagicMock()
         instance.config.get_int.return_value = 17
-        instance.config.get_string.return_value = '\w+'
+        instance.config.get_string.return_value = '\\w+'
         props = {"_id": "some_id", "name": "Malvin"}
         user = User(**props)
 
         user_dao = MagicMock()
         db = MagicMock()
+        cache =MagicMock()
 
         # act / assert
         with self.assertRaises(ValueError):
-            user.follow("some_id", user_dao, db)
+            user.follow("some_id", user_dao, db, cache)
     
     @patch("posterr.services.user.ConfigManager")
     def test_follow_user(self, config_mock):
@@ -115,7 +117,7 @@ class TestUser(TestCase):
         instance = config_mock.return_value
         instance.config = MagicMock()
         instance.config.get_int.return_value = 17
-        instance.config.get_string.return_value = '\w+'
+        instance.config.get_string.return_value = '\\w+'
         props = {"_id": "some_id", "name": "Malvin"}
 
         user_instance = MagicMock()
@@ -127,15 +129,16 @@ class TestUser(TestCase):
 
         user_dao = MagicMock()
         db = MagicMock()
+        cache = MagicMock()
 
         # act
-        user_id = user.follow("user_to_follow_id", user_dao, db)
+        user_id = user.follow("user_to_follow_id", user_dao, db, cache)
 
         # assert
         self.assertEqual(user_id, "some_id")
         self.assertEqual(User.get_by_id.call_count, 2)
-        User.get_by_id.assert_any_call("some_id", user_dao, db)
-        User.get_by_id.assert_any_call("user_to_follow_id", user_dao, db)
+        User.get_by_id.assert_any_call("some_id", user_dao, db, cache)
+        User.get_by_id.assert_any_call("user_to_follow_id", user_dao, db, cache)
         self.assertEqual(user_instance.update.call_count, 2)
 
         
@@ -145,7 +148,7 @@ class TestUser(TestCase):
         instance = config_mock.return_value
         instance.config = MagicMock()
         instance.config.get_int.return_value = 17
-        instance.config.get_string.return_value = '\w+'
+        instance.config.get_string.return_value = '\\w+'
         props = {"_id": "some_id", "name": "Malvin"}
 
         user_instance = MagicMock()
@@ -157,15 +160,16 @@ class TestUser(TestCase):
 
         user_dao = MagicMock()
         db = MagicMock()
+        cache = MagicMock()
 
         # act
-        user_id = user.unfollow("user_to_follow_id", user_dao, db)
+        user_id = user.unfollow("user_to_follow_id", user_dao, db, cache)
 
         # assert
         self.assertEqual(user_id, "some_id")
         self.assertEqual(User.get_by_id.call_count, 2)
-        User.get_by_id.assert_any_call("some_id", user_dao, db)
-        User.get_by_id.assert_any_call("user_to_follow_id", user_dao, db)
+        User.get_by_id.assert_any_call("some_id", user_dao, db, cache)
+        User.get_by_id.assert_any_call("user_to_follow_id", user_dao, db, cache)
         self.assertEqual(user_instance.update.call_count, 2)
 
     @patch("posterr.services.user.ConfigManager")
@@ -174,7 +178,7 @@ class TestUser(TestCase):
         instance = config_mock.return_value
         instance.config = MagicMock()
         instance.config.get_int.return_value = 17
-        instance.config.get_string.return_value = '\w+'
+        instance.config.get_string.return_value = '\\w+'
         props = {"_id": "some_id", "name": "Malvin"}
 
         user = User(**props)
@@ -182,12 +186,13 @@ class TestUser(TestCase):
         user_dao = MagicMock()
         user_dao.update = MagicMock()
         db = MagicMock()
+        cache = MagicMock()
 
         # act
-        user.update(user_dao, db)
+        user.update(user_dao, db, cache)
 
         # assert
-        user_dao.update.assert_called_once_with(user, db)
+        user_dao.update.assert_called_once_with(user, db, cache)
 
 
     @patch("posterr.services.user.ConfigManager")
@@ -196,7 +201,7 @@ class TestUser(TestCase):
         instance = config_mock.return_value
         instance.config = MagicMock()
         instance.config.get_int.return_value = 17
-        instance.config.get_string.return_value = '\w+'
+        instance.config.get_string.return_value = '\\w+'
         props = {"_id": "some_id", "name": "Malvin"}
 
         # act

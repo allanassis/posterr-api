@@ -6,7 +6,7 @@ authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.scripts]
 start = "posterr.app:main"
-test = "pytest"
+
 [tool.poetry.dependencies]
 python = "^3.9"
 aiohttp = "^3.8.1"

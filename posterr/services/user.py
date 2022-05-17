@@ -27,7 +27,7 @@ class User(ServiceBase):
     entity_name:str = "user"
 
     def __init__(self, _id:str = None, name: str = None) -> None:
-        if _id is not None:
+        if _id:
             self._id = _id
         if name:
             config = ConfigManager().config
@@ -47,11 +47,11 @@ class User(ServiceBase):
         self.following = {"count": 0, "list": []}
         self.posts = {"count": 0, "list": []}
 
-    def post(self, post: Post, userDao: object, postDao:PostDao, db:DataBase) -> str:
-        post_id:str = post.save(postDao, db)
+    def post(self, post: Post, user_dao: object, post_dao:PostDao, db:DataBase) -> str:
+        post_id:str = post.save(post_dao, db)
         self.posts["list"].append(post_id)
         self.posts["count"] = self.posts["count"] + 1
-        self.update(userDao, db)
+        self.update(user_dao, db)
         return post_id
 
     # TODO: Fix creating a querying to do just one database call to update the users

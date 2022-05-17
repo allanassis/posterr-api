@@ -23,14 +23,13 @@ class Post(ServiceBase):
 
     entity_name:str = "post"
 
-    def __init__(self, text: str = None, user_id: str = None, parent_id: str = None, type:str = PostType.NORMAL.name) -> None:
+    def __init__(self, text: str = "", user_id: str = "", parent_id: str = "", type:str = PostType.NORMAL.name) -> None:
         maxium_size:int = ConfigManager().config.get_int("post.maximum_size")
-
-        if text is not None and len(text) > maxium_size:
+        if len(text) > maxium_size:
             raise ValueError(f"Post has a maximum lenght of {maxium_size}")
-        if parent_id is not None:
+        if parent_id:
             self.parent_id = parent_id
-        if type is not None:
+        if type:
             self.type = PostType[type].value
 
         self.text = text

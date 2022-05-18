@@ -26,9 +26,9 @@ class PostDao(object):
             last_post:object = db.get_by_id(last_post_id, Post.entity_name)
             query["created_at"] = { "$lt": last_post["created_at"] }
 
-        if self.queries.get("following"):
-            if self.queries.get("following_list"):
-                query["user_id"] = {"$in": self.queries["following_list"] }
+        if self.queries.get("from_list"):
+            if self.queries.get("list"):
+                query["user_id"] = {"$in": self.queries["list"] }
             else:
                 raise NotFoundErr("No posts from those who you follow")
 

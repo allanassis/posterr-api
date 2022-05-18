@@ -21,7 +21,7 @@ class PostHandlers(BaseHandler, View):
         cache:Cache = self.request.config_dict["cache"]
 
 
-        [ user_id, last_post_id, limit_per_page ] = self._get_queries(self.request.query)
+        [ user_id, following, last_post_id, limit_per_page ] = self._get_queries(self.request.query)
 
         post_dao_args:dict = {
             "limit": int(limit_per_page),
@@ -31,8 +31,11 @@ class PostHandlers(BaseHandler, View):
         if user_id:
             user_dao:UserDao = UserDao()
             user:User = User.get_by_id(user_id, user_dao, db, cache)
-            post_dao_args["following_list"] = user.following["list"]
-            post_dao_args["following"] = True
+            if following:
+                post_dao_args["list"] = user.following["list"]
+            else:
+                post_dao_args["list"] = [user_id]
+            post_dao_args["from_list"] = True
 
         post_dao:PostDao = PostDao(post_dao_args)
         if post_id is not None:
@@ -43,6 +46,7 @@ class PostHandlers(BaseHandler, View):
     def _get_queries(self, query:_MultiDictProxy) -> List[str]:
         queries:List = [
             query.get("user_id", ""),
+            query.get("following", ""),
             query.get("last_post_id", ""),
             query.get("limit", "10")
         ]

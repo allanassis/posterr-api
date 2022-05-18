@@ -1,3 +1,4 @@
+import json
 from typing import List
 
 from typeguard import typechecked
@@ -20,7 +21,7 @@ class BaseHandler(object):
         if not instance_list:
             return Response(body="Not found", status=HTTPNotFound.status_code)
         json_instances: List[str] = [str(instance) for instance in instance_list]
-        return Response(body=str(json_instances), status=HTTPOk.status_code)
+        return Response(body=json.dumps(json_instances), status=HTTPOk.status_code)
 
     async def _is_valid_json(self, request) -> bool:
         try:

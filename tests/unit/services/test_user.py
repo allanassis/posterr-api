@@ -86,7 +86,7 @@ class TestUser(TestCase):
         post_id = user.post(post, user_dao, post_dao, db, cache)
 
         # assert
-        post.save.assert_called_once_with(post_dao, db)
+        post.save.assert_called_once_with(post_dao, db, cache)
         user.update.assert_called_once_with(user_dao, db, cache)
         self.assertListEqual(user.posts["list"], [post_id])
         self.assertEqual(user.posts["count"], 1)

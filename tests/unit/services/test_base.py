@@ -15,7 +15,7 @@ class TestServiceBase:
         self.dao.save = MagicMock(return_value="some_id")
 
         # act
-        inserted_id = self.service.save(self.dao, self.db)
+        inserted_id = self.service.save(self.dao, self.db, self.cache)
 
         # assert
         assert inserted_id == "some_id"

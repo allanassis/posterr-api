@@ -62,6 +62,25 @@ class TestE2EPosts(async_case.IsolatedAsyncioTestCase):
         self.assertEqual(status, 200)
         self.assertIsInstance(post_id, str)
     
+    async def test_post_creation_limit(self):
+        # arrange / act
+        user_id, _ = await self._create_user()
+        post_body = { "user_id": user_id, "text": "Gomu Gomu no Thor"}
+
+        # act
+        await self._create_post(post_body)
+        await self._create_post(post_body)
+        await self._create_post(post_body)
+        await self._create_post(post_body)
+        await self._create_post(post_body)
+
+        error, status = await self._create_post(post_body)
+        
+        # assert
+        self.assertEqual(status, 500)
+        self.assertEqual(json.loads(error)["detail"], "You can not post more than 5 posts a day")
+    
+
 
     async def test_user_post_by_id(self):
         # arrange

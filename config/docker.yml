@@ -10,6 +10,7 @@ storages:
     port: 6379
     ttl: 3000
 post:
+  limit_per_day: 5
   maximum_size: 777
   maximum_page_size: 100
   date_format: "%b %d, %Y"

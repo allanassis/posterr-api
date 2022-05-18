@@ -15,6 +15,10 @@ services:
       - posterr-redis
     networks:
       - posterr-network
+    privileged: true
+    volumes:
+      - "/etc/timezone:/etc/timezone:ro"
+      -  "/etc/localtime:/etc/localtime:ro"
   posterr-redis:
     container_name: posterr-redis
     image: redis:5

@@ -194,7 +194,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"user_id\": \"62847e224e65ac2c3836171d\",\n    \"text\": \"kimimaru 1\"\n}",
+							"raw": "{\n    \"user_id\": \"62847e224e65ac2c3836171d\",\n    \"text\": \"kimimaru 1\"\n   // \"parent_id\": \"some_post_parent_id\" // Only setted if the type field is different from \"normal\"\n    //\"type\": \"bla\" // one of the followings \"normal\", \"reposted\", \"quoted\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

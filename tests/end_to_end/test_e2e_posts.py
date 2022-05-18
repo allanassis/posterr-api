@@ -143,29 +143,6 @@ class TestE2EPosts(async_case.IsolatedAsyncioTestCase):
         self.assertEqual(len(json.loads(posts)), 2)
         self.assertNotIn(json.dumps(expected_post), json.loads(posts))
 
-    async def test_post_get_all_from_users_following(self):
-        # arrange
-        user_id_root, _ = await self._create_user()
-        user_id_following, _ = await self._create_user()
-        post_body_1 = { "user_id": user_id, "text": "Gomu Gomu no Thor"}
-        post_id, _ = await self._create_post(post_body_1)
-        post_body_1 = { "user_id": user_id, "text": "Gomu Gomu no Thor"}
-        post_id, _ = await self._create_post(post_body_1)
-        expected_post = {
-            "text": "Gomu Gomu no Thor", 
-            "user_id": user_id,
-            "_id": post_id,
-            "type": "normal", 
-            "created_at": datetime.now().strftime("%b %d, %Y")
-        }
-        await self._create_post(post_body)
-        await self._create_post(post_body)
-
-        # act
-        posts, status = await self._get_post(query=f"?limit=2&last_post_id={post_id}")
-
-        # assert
-        self.assertEqual(status, 200)
-        self.assertEqual(len(json.loads(posts)), 2)
-        self.assertNotIn(json.dumps(expected_post), json.loads(posts))
+# TODO:  async def test_get_post_only_from_following
+# no time :/
 

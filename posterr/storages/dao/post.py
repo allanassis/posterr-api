@@ -49,6 +49,18 @@ class PostDao(object):
 
         return item
     
-    def save(self, post:Post, db:DataBase) -> str:
+    def save(self, post:Post, db:DataBase, cache:Cache) -> str:
+        limit_per_day:int = ConfigManager().config.get_int("post.limit_per_day")
+        key = f"post:limit:{post.user_id}"
+        rate_limit = cache.get(key) #TODO: All this rate limit logic should be in service layer
+        if rate_limit is not None and int(rate_limit) >= limit_per_day:
+            raise PermissionError("You can not post more than 5 posts a day")
+
+        value = cache.client.incr(key, 1)
+        if value == 1:
+            dt = datetime.now()
+            seconds_until_day_end = ((24 - dt.hour - 1) * 60 * 60) + ((60 - dt.minute - 1) * 60) + (60 - dt.second)
+            cache.client.expire(key, seconds_until_day_end)
+
         result = db.save(post, Post.entity_name)
         return result

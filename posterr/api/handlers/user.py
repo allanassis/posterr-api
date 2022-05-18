@@ -30,6 +30,7 @@ class UserHandlers(BaseHandler, View):
 
         body:dict = await self.request.json()
         db:DataBase = self.request.config_dict["db"]
+        cache:Cache = self.request.config_dict["cache"]
 
         user_name:str = body.get("name", "")
 
@@ -41,7 +42,7 @@ class UserHandlers(BaseHandler, View):
 
         try:
             user:User = User(name=user_name)
-            user_id:str = user.save(user_dao, db)
+            user_id:str = user.save(user_dao, db, cache)
 
         except UserValidationError as err:
             return Response(body=str(err), status=HTTPUnprocessableEntity.status_code)

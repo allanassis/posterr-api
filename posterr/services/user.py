@@ -49,7 +49,7 @@ class User(ServiceBase):
         self.posts = {"count": 0, "list": []}
 
     def post(self, post: Post, user_dao: object, post_dao:PostDao, db:DataBase, cache: Cache) -> str:
-        post_id:str = post.save(post_dao, db)
+        post_id:str = post.save(post_dao, db, cache)
         self.posts["list"].append(post_id)
         self.posts["count"] = self.posts["count"] + 1
         self.update(user_dao, db, cache)

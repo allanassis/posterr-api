@@ -31,7 +31,7 @@ class UserDao(object):
         cache.delete(user._id)
         return result
     
-    def save(self, user:User, db:DataBase) -> str:
+    def save(self, user:User, db:DataBase, cache: Cache) -> str:
         result = db.save(user, User.entity_name)
         return result
     

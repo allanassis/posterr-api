@@ -10,8 +10,8 @@ class ServiceBase(object):
 
     entity_name:str = "base"
 
-    def save(self, dao: object, db: DataBase) -> str:
-        inserted_id:str = dao.save(self, db)
+    def save(self, dao: object, db: DataBase, cache:Cache) -> str:
+        inserted_id:str = dao.save(self, db, cache)
         return inserted_id
 
     @classmethod
